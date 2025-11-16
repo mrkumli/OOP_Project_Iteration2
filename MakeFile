@@ -1,0 +1,18 @@
+# 1. Variables
+SFML_PATH = C:/libraries/SFML-3.0.2
+CXX = g++
+OUTPUT = game.exe
+
+# 2. The Setup
+INCLUDES = -I"$(SFML_PATH)/include"
+LIB_PATH = -L"$(SFML_PATH)/lib"
+LIBS = -lsfml-graphics -lsfml-window -lsfml-system
+
+# 3. The Targets
+all: compile
+
+compile:
+	$(CXX) test.cpp -o $(OUTPUT) $(INCLUDES) $(LIB_PATH) $(LIBS)
+
+run: compile
+	./$(OUTPUT)
