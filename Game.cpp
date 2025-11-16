@@ -135,4 +135,22 @@ void Game::checkDeath()
         }
     }
 
+    for(const auto* gooPool:m_board.getGooPools()){
+        if(playerRect.findIntersection(gooPool)){
+            player->kill();
+            std::cout<<"Player died in Goo Pool" << std::endl;
+            break;
+        }
+    }
+
+}
+
+void Game::checkWin() {
+    for(auto* door:m_doors){
+        if(door && !door->isOpen()) {
+            return false;
+        }
+
+    }
+    return true;
 }
