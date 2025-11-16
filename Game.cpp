@@ -8,3 +8,26 @@ Game::Game():
 {
     m_window.setFramerateLimit(60);
 }
+
+Game::~Game()
+{
+   cleanup();
+}
+
+void Game::run()
+{
+    while (m_window.isOpen())
+    {
+        handleEvents();
+        update();
+        draw();
+    }
+}
+
+void Game::handleEvents()
+{
+    while(const auto event == m_window.pollEvent()) {
+        if (event->is<sf::Event::Closed>())
+            m_window.close();
+    }
+}
