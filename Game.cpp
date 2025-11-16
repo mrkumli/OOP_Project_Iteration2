@@ -88,4 +88,10 @@ void Game::checkCollisions()
         }
     }
 
+    for(auto* player:m_player){
+        if(!player || player->isDead()){
+            continue;
+        }
+        door->tryOpen(player);
+    }
 }
