@@ -1,0 +1,11 @@
+# Ignore build output
+*.exe
+*.o
+*.obj
+
+# Ignore SFML DLLs (We don't upload big binary files)
+*.dll
+
+# Ignore Zed and VS Code settings
+.zed/
+.vscode/
