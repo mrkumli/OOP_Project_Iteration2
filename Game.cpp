@@ -31,3 +31,25 @@ void Game::handleEvents()
             m_window.close();
     }
 }
+
+void Game::update()
+{
+    for (auto* player:m_players){
+        if(player && !player->isDead()){
+            player->update(m_board);
+        }
+    }
+
+    checkCollisions();
+    checkDeath();
+
+    for(auto* player:m_players){
+        if(gate){
+            gate->tryOpen(m_players);
+        }
+    }
+
+    if(checkWin()){
+        std::cout<< "Level Completed!" << std::endl;
+    }
+}
