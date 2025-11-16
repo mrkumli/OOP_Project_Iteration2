@@ -110,4 +110,17 @@ void Game::checkDeath()
             continue;
         }
     }
+
+    sf::FloatRect playerRect = player->getGlobalBounds();
+    sf::FloatRect playerType = player->getType();
+
+    if(playerType == "cold"){
+
+    }
+
+    if(playerType == "hot"){
+
+    }
+
+
 }
