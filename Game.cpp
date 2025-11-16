@@ -126,15 +126,13 @@ void Game::checkDeath()
     }
 
     if(playerType == "hot"){
-        for(const auto* lavaPool:m_board.getLavaPools()){
-            if (playerRect.findIntersection(lavaPool)) {
+        for(const auto* waterPool:m_board.getWaterPools()){
+            if (playerRect.findIntersection(waterPool)) {
                 player->kill();
                 std::cout << "Hot died in Water" << std::endl;
                 break;
             }
         }
     }
-
-
 
 }
