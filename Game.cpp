@@ -53,3 +53,28 @@ void Game::update()
         std::cout<< "Level Completed!" << std::endl;
     }
 }
+
+
+void Game::draw()
+{
+    //Gats
+    for (auto* player:m_players){
+        if(gate){
+            gate->draw(m_window);
+        }
+    }
+    //Doors
+    for(auto* player:m_players){
+        if(door){
+            door->draw(m_window);
+        }
+    }
+    //Players
+    for(auto* players:m_players){
+        if(player && !player->isDead()){
+            player->draw(m_window);
+        }
+    }
+
+    m_window.display();//displaying everything
+}
