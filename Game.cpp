@@ -78,3 +78,14 @@ void Game::draw()
 
     m_window.display();//displaying everything
 }
+
+
+void Game::checkCollisions()
+{
+    for(auto* player:m_players){
+        if(!door){//check through all the doors if collision is true with either
+            continue;
+        }
+    }
+
+}
