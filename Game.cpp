@@ -154,3 +154,15 @@ void Game::checkWin() {
     }
     return true;
 }
+
+void Game::cleanup() {
+    for(auto* player:m_players){
+        delete player;
+    }
+
+    m_players.clear();
+    for(auto* door:m_doors){
+        delete door;
+    }
+    m_doors.clear();
+}
