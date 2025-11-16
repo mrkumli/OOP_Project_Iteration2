@@ -22,14 +22,33 @@ int main() {
                         window.close();
                     }
                 }
-                // To check new resized screen res:
+                // <____________ To check new resized screen res: ____________>
 
                 // if (const auto* resized = event->getIf<sf::Event::Resized>())
                 // {
                 //     std::cout << "new width: " << resized->size.x << std::endl;
                 //     std::cout << "new height: " << resized->size.y << std::endl;
                 // }
+
+                // <____________ To check focus of the game window: ____________>
+
+                // if (event->is<sf::Event::FocusLost>())
+                //     myGame.pause();
+
+                // if (event->is<sf::Event::FocusGained>())
+                //     myGame.resume();
+                //
+                if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+                {
+                    if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+                    {
+                        std::cout << "the left button was pressed" << std::endl;
+                        std::cout << "mouse x: " << mouseButtonPressed->position.x << std::endl;
+                        std::cout << "mouse y: " << mouseButtonPressed->position.y << std::endl;
+                    }
+                }
             }
+
     }
     return 0;
 }
