@@ -29,11 +29,12 @@ void Game::handleEvents()
     while(const auto event == m_window.pollEvent()) {
         if (event->is<sf::Event::Closed>())
             m_window.close();
-        if (event->is<sf::Event::KeyPressed>()){
-            if(event->key.code == sf::Keyboard::Escape){
-                m_window.close();
-            }
-        }
+
+        // if (event->is<sf::Event::KeyPressed>()){
+        //     if(event->key.code == sf::Keyboard::Escape){
+        //         m_window.close();
+        //     }
+        // } Not necessary since it will just exit the entire program everytime theres escape
     }
 }
 
