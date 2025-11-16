@@ -115,12 +115,26 @@ void Game::checkDeath()
     sf::FloatRect playerType = player->getType();
 
     if(playerType == "cold"){
+        for(const auto* lavaPool:m_board.getLavaPools()){
+            if(playerRect.findIntersection(lavaPool)){
+                player->kill();
+                std::cout << "Cold died in Lava" << std::endl;
+                break;
+            }
 
+        }
     }
 
     if(playerType == "hot"){
-
+        for(const auto* lavaPool:m_board.getLavaPools()){
+            if (playerRect.findIntersection(lavaPool)) {
+                player->kill();
+                std::cout << "Hot died in Water" << std::endl;
+                break;
+            }
+        }
     }
+
 
 
 }
