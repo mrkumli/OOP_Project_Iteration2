@@ -105,5 +105,9 @@ void Game::checkCollisions()
 
 void Game::checkDeath()
 {
-    for(auto* player:)
+    for(auto* player:m_players){
+        if(!player || player->isDead()){
+            continue;
+        }
+    }
 }
