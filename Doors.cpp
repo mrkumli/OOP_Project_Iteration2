@@ -77,8 +77,7 @@ FireDoor::FireDoor(const sf::Vector2f& doorLocation):
     //hitbox for collision
     m_rect = sf::FloatRect(
         m_doorLocation,
-        sf::Vector2f(m_doorTexture.getSize().x,
-        m_doorTexture.getSize().y)
+        sf::Vector2f(m_doorTexture.getSize().x, m_doorTexture.getSize().y)
         );
 }
 
@@ -116,8 +115,7 @@ WaterDoor::WaterDoor(const sf::Vector2f& doorLocation):
     //hitbox for collision
     m_rect = sf::FloatRect(
         m_doorLocation,
-        sf::Vector2f(m_doorTexture.getSize().x,
-        m_doorTexture.getSize().y)
+        sf::Vector2f(m_doorTexture.getSize().x,m_doorTexture.getSize().y)
         );
 }
 
