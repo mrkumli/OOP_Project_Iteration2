@@ -61,3 +61,81 @@ bool Doors::isOpen() const {
 sf::FloatRect Doors::getRect() const {
     return m_rect;
 }
+
+// ------------
+// HOT Door implementation
+// -------------
+FireDoor::FireDoor(const sf::Vector2f& doorLocation):
+    Doors(doorLocation)
+{
+    if (!m_doorTexture.loadFromFile("data/door_images/fire_door.png")) {
+        std::cerr << "Fire Door Picture Error" << std::endl;
+    }
+    m_doorSprite.setTexture(m_doorTexture);
+    m_doorSprite.setPosition(m_doorLocation);
+
+    //hitbox for collision
+    m_rect = sf::FloatRect(
+        m_doorLocation,
+        sf::Vector2f(m_doorTexture.getSize().x,
+        m_doorTexture.getSize().y)
+        );
+}
+
+void FireDoor::tryOpen(Character& player) {
+    //player collision with door check
+    if (player.getRect().findIntersection(m_rect)) {
+        if (player.getType() == "hot") {
+            m_playerAtDoor = true;
+            std::cout << "Hot player at Fire Door!" << std::endl;
+        }
+        else {
+            m_playerAtDoor = false;
+            std::cout << "Cold player cannot open Fire Door!" << std::endl;
+        }
+    }
+    else {
+        m_playerAtDoor = false;
+    }
+    //raise up or down the door on player interaction
+    tryRaiseDoor();
+}
+
+// ------------
+// Cold Door implementation
+// -------------
+WaterDoor::WaterDoor(const sf::Vector2f& doorLocation):
+    Doors(doorLocation)
+{
+    if (!m_doorTexture.loadFromFile("data/door_images/water_door.png")) {
+        std::cerr << "Water Door Picture Error" << std::endl;
+    }
+    m_doorSprite.setTexture(m_doorTexture);
+    m_doorSprite.setPosition(m_doorLocation);
+
+    //hitbox for collision
+    m_rect = sf::FloatRect(
+        m_doorLocation,
+        sf::Vector2f(m_doorTexture.getSize().x,
+        m_doorTexture.getSize().y)
+        );
+}
+
+void WaterDoor::tryOpen(Character& player) {
+    //player collision with door check
+    if (player.getRect().findIntersection(m_rect)) {
+        if (player.getType() == "cold") {
+            m_playerAtDoor = true;
+            std::cout << "Cold player at Water Door!" << std::endl;
+        }
+        else {
+            m_playerAtDoor = false;
+            std::cout << "Hot player cannot open Water Door!" << std::endl;
+        }
+    }
+    else {
+        m_playerAtDoor = false;
+    }
+    //raise up or down the door on player interaction
+    tryRaiseDoor();
+}
