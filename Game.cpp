@@ -165,4 +165,8 @@ void Game::cleanup() {
         delete door;
     }
     m_doors.clear();
+    for(auto* gates:m_gates){
+        delete gates;
+    }
+    m_gates.clear();
 }
