@@ -92,6 +92,6 @@ void Game::checkCollisions()
         if(!player || player->isDead()){
             continue;
         }
-        door->tryOpen(player);
+        door->tryOpen(*player);
     }
 }
