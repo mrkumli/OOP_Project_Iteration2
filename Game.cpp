@@ -110,6 +110,15 @@ void Game::drawBoard() {
     auto bgIt = textures.find("background");
     if (bgIt != textures.end()) {
         sf::Sprite bgSprite(bgIt->second);
+        //Dynamic calculation of the window size based on local bounds
+        sf::Vector2u windowSize = m_window.getSize();
+                sf::FloatRect spriteSize = bgSprite.getLocalBounds();
+
+                bgSprite.setScale(sf::Vector2f(
+                    static_cast<float>(windowSize.x) / spriteSize.size.x,
+                    static_cast<float>(windowSize.y) / spriteSize.size.y
+                ));
+
         m_window.draw(bgSprite);
     }
 
