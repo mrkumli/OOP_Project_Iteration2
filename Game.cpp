@@ -122,8 +122,13 @@ void Game::drawBoard() {
                 auto it = textures.find(tile);
                 if (it != textures.end()) {
                     sf::Sprite tileSprite(it->second);
-                    tileSprite.setPosition(static_cast<float>(x * CHUNK_SIZE),
-                                          static_cast<float>(y * CHUNK_SIZE));
+
+                    // FIX: Wrap coordinates in sf::Vector2f(...)
+                    tileSprite.setPosition(sf::Vector2f(
+                        static_cast<float>(x * CHUNK_SIZE),
+                        static_cast<float>(y * CHUNK_SIZE)
+                    ));
+
                     m_window.draw(tileSprite);
                 }
             }
@@ -143,7 +148,7 @@ void Game::checkDeath() {
             for (const auto& lavaPool : m_board.getLavaPools()) {
                 if (playerRect.findIntersection(lavaPool)) {
                     player->kill();
-                    std::cout << "\n💀 COLD PLAYER DIED IN LAVA! 💀" << std::endl;
+                    std::cout << "\n!!! COLD PLAYER DIED IN LAVA! !!!" << std::endl;
                     break;
                 }
             }
@@ -154,7 +159,7 @@ void Game::checkDeath() {
             for (const auto& waterPool : m_board.getWaterPools()) {
                 if (playerRect.findIntersection(waterPool)) {
                     player->kill();
-                    std::cout << "\n💀 HOT PLAYER DIED IN WATER! 💀" << std::endl;
+                    std::cout << "\n!!! HOT PLAYER DIED IN WATER! !!!" << std::endl;
                     break;
                 }
             }
@@ -164,7 +169,7 @@ void Game::checkDeath() {
         for (const auto& gooPool : m_board.getGooPools()) {
             if (playerRect.findIntersection(gooPool)) {
                 player->kill();
-                std::cout << "\n💀 PLAYER DIED IN GOO! 💀" << std::endl;
+                std::cout << "\n!!! PLAYER DIED IN GOO! !!!" << std::endl;
                 break;
             }
         }
