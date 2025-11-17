@@ -131,20 +131,17 @@ void Character::setMovingLeft(bool moving) {
 }
 
 void Character::setJumping(bool jumping) {
-    if (m_airTimer < 6) {  // Coyote time - allows jumping shortly after falling
+    if (m_airTimer < 6) {
         m_isJumping = jumping;
     }
 }
 
-// ============================================================================
-// Hot character implementation - DIES IN WATER
-// ============================================================================
+// Hot character - DIES IN WATER
 Hot::Hot(const sf::Vector2f& pos) : Character(pos) {
     m_type = "hot";
 
     if (!m_texture.loadFromFile("data/player_images/magmaboy.png")) {
         std::cerr << "Failed to load Hot player texture" << std::endl;
-        // Create a simple colored rectangle as fallback
         sf::Image fallback;
         fallback.create(16, 32, sf::Color::Red);
         m_texture.loadFromImage(fallback);
@@ -159,15 +156,12 @@ void Hot::update(Board& board) {
     Character::update(board);
 }
 
-// ============================================================================
-// Cold character implementation - DIES IN LAVA
-// ============================================================================
+// Cold character - DIES IN LAVA
 Cold::Cold(const sf::Vector2f& pos) : Character(pos) {
     m_type = "cold";
 
     if (!m_texture.loadFromFile("data/player_images/hydrogirl.png")) {
         std::cerr << "Failed to load Cold player texture" << std::endl;
-        // Create a simple colored rectangle as fallback
         sf::Image fallback;
         fallback.create(16, 32, sf::Color::Blue);
         m_texture.loadFromImage(fallback);
