@@ -4,12 +4,13 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <string>
+#include <optional>
 
 class LevelSelect {
 private:
     sf::Texture m_background;
     std::map<int, sf::Texture> m_levelTextures;
-    sf::Sprite m_backgroundSprite;
+    std::optional<sf::Sprite> m_backgroundSprite;
     std::map<int, sf::Sprite> m_levelSprites;
 
     int m_selectedLevel;

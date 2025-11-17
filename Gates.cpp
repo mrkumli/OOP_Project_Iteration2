@@ -1,11 +1,8 @@
-// Gates.cpp
 #include "include/Gates.h"
 #include <iostream>
 
 Gates::Gates(const sf::Vector2f& gateLocation, const std::vector<sf::Vector2f>& plateLocations)
-    : m_gateTexture(),
-      m_plateTexture(),
-      m_gateLocation(gateLocation),
+    : m_gateLocation(gateLocation),
       m_plateLocations(plateLocations),
       m_isPressed(false),
       m_isOpen(false)
@@ -30,8 +27,8 @@ Gates::Gates(const sf::Vector2f& gateLocation, const std::vector<sf::Vector2f>& 
         m_plateSprites.push_back(plateSprite);
     }
 
-    m_gateSprite.setTexture(m_gateTexture);
-    m_gateSprite.setPosition(m_gateLocation);
+    m_gateSprite.emplace(m_gateTexture);
+    m_gateSprite->setPosition(m_gateLocation);
 }
 
 void Gates::loadImages() {
@@ -65,19 +62,19 @@ void Gates::tryOpen(const std::list<Character*>& players) {
     if (m_isPressed && !m_isOpen) {
         m_gateLocation.y -= 2 * CHUNK_SIZE;
         m_gateRect.position.y -= 2 * CHUNK_SIZE;
-        m_gateSprite.setPosition(m_gateLocation);
+        if (m_gateSprite) m_gateSprite->setPosition(m_gateLocation);
         m_isOpen = true;
     }
     else if (!m_isPressed && m_isOpen) {
         m_gateLocation.y += 2 * CHUNK_SIZE;
         m_gateRect.position.y += 2 * CHUNK_SIZE;
-        m_gateSprite.setPosition(m_gateLocation);
+        if (m_gateSprite) m_gateSprite->setPosition(m_gateLocation);
         m_isOpen = false;
     }
 }
 
 void Gates::draw(sf::RenderWindow& window) {
-    window.draw(m_gateSprite);
+    if (m_gateSprite) window.draw(*m_gateSprite);
 
     for (const auto& plateSprite : m_plateSprites) {
         window.draw(plateSprite);

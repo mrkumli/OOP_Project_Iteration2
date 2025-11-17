@@ -1,11 +1,8 @@
-// LevelSelect.cpp
-#include "include/LevelSelect.h"
+#include "LevelSelect.h"
 #include <iostream>
 
 LevelSelect::LevelSelect()
-    : m_background(),
-      m_backgroundSprite(),
-      m_selectedLevel(0)
+    : m_selectedLevel(0)
 {
     loadImages();
 }
@@ -14,7 +11,7 @@ void LevelSelect::loadImages() {
     if (!m_background.loadFromFile("data/screens/level_select_screen.png")) {
         std::cerr << "Warning: Failed to load level select background" << std::endl;
     }
-    m_backgroundSprite.setTexture(m_background);
+    m_backgroundSprite.emplace(m_background);
 
     for (int i = 1; i <= 5; ++i) {
         sf::Texture texture;
@@ -24,13 +21,12 @@ void LevelSelect::loadImages() {
         }
         m_levelTextures[i] = texture;
 
-        sf::Sprite sprite(m_levelTextures[i]);
-        m_levelSprites[i] = sprite;
+        m_levelSprites[i] = sf::Sprite(m_levelTextures[i]);
     }
 }
 
 void LevelSelect::draw(sf::RenderWindow& window) {
-    window.draw(m_backgroundSprite);
+    if (m_backgroundSprite) window.draw(*m_backgroundSprite);
 
     float startY = 100.0f;
     float spacing = 50.0f;
@@ -41,7 +37,7 @@ void LevelSelect::draw(sf::RenderWindow& window) {
         float x = (window.getSize().x - sprite.getGlobalBounds().size.x) / 2.0f;
         float y = startY + (i - 1) * spacing;
 
-        sprite.setPosition(sf::Vector2f(x, y));  // SFML 3.0: Vector2f
+        sprite.setPosition(sf::Vector2f(x, y));
         window.draw(sprite);
     }
 }

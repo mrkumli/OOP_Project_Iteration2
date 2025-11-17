@@ -3,13 +3,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <optional>
 
 class Board;
 
 class Character {
 protected:
     sf::FloatRect m_rect;
-    sf::Sprite m_sprite;
+    std::optional<sf::Sprite> m_sprite;  // Changed to optional
     sf::Texture m_texture;
     bool m_isAlive;
     float m_yVelocity;

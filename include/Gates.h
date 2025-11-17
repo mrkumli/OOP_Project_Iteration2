@@ -4,13 +4,14 @@
 #include <SFML/Graphics.hpp>
 #include <list>
 #include <vector>
+#include <optional>
 #include "Character.h"
 
 class Gates {
 private:
     sf::FloatRect m_gateRect;
     std::vector<sf::FloatRect> m_plateRects;
-    sf::Sprite m_gateSprite;
+    std::optional<sf::Sprite> m_gateSprite;
     std::vector<sf::Sprite> m_plateSprites;
     sf::Texture m_gateTexture;
     sf::Texture m_plateTexture;

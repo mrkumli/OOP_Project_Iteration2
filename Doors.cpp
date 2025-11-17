@@ -2,10 +2,7 @@
 #include <iostream>
 
 Doors::Doors(const sf::Vector2f& doorLocation)
-    : m_doorTexture(),
-      m_frameTexture(),
-      m_backgroundTexture(),
-      m_doorLocation(doorLocation),
+    : m_doorLocation(doorLocation),
       m_isOpen(false),
       m_heightRaised(0.0f),
       m_playerAtDoor(false)
@@ -21,12 +18,11 @@ void Doors::loadCommonImages() {
         std::cerr << "Warning: Failed to load door background texture" << std::endl;
     }
 
-    m_frameSprite.setTexture(m_frameTexture);
-    m_backgroundSprite.setTexture(m_backgroundTexture);
+    m_frameSprite.emplace(m_frameTexture);
+    m_backgroundSprite.emplace(m_backgroundTexture);
 
-    m_backgroundSprite.setPosition(m_doorLocation);
-    // SFML 3.0: setPosition takes Vector2f
-    m_frameSprite.setPosition(sf::Vector2f(
+    m_backgroundSprite->setPosition(m_doorLocation);
+    m_frameSprite->setPosition(sf::Vector2f(
         m_doorLocation.x - CHUNK_SIZE,
         m_doorLocation.y - 2 * CHUNK_SIZE
     ));
@@ -41,21 +37,21 @@ void Doors::tryRaiseDoor() {
             m_isOpen = true;
         }
 
-        m_doorSprite.setPosition(m_doorLocation);
+        if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
     else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
         m_doorLocation.y += DOOR_SPEED;
         m_heightRaised -= DOOR_SPEED;
         m_isOpen = false;
 
-        m_doorSprite.setPosition(m_doorLocation);
+        if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
 }
 
 void Doors::draw(sf::RenderWindow& window) {
-    window.draw(m_backgroundSprite);
-    window.draw(m_doorSprite);
-    window.draw(m_frameSprite);
+    if (m_backgroundSprite) window.draw(*m_backgroundSprite);
+    if (m_doorSprite) window.draw(*m_doorSprite);
+    if (m_frameSprite) window.draw(*m_frameSprite);
 }
 
 bool Doors::isOpen() const {
@@ -72,10 +68,9 @@ FireDoor::FireDoor(const sf::Vector2f& doorLocation)
     if (!m_doorTexture.loadFromFile("data/door_images/fire_door.png")) {
         std::cerr << "Warning: Failed to load fire door texture" << std::endl;
     }
-    m_doorSprite.setTexture(m_doorTexture);
-    m_doorSprite.setPosition(m_doorLocation);
+    m_doorSprite.emplace(m_doorTexture);
+    m_doorSprite->setPosition(m_doorLocation);
 
-    // SFML 3.0: FloatRect(position, size)
     m_rect = sf::FloatRect(
         m_doorLocation,
         sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
@@ -103,10 +98,9 @@ WaterDoor::WaterDoor(const sf::Vector2f& doorLocation)
     if (!m_doorTexture.loadFromFile("data/door_images/water_door.png")) {
         std::cerr << "Warning: Failed to load water door texture" << std::endl;
     }
-    m_doorSprite.setTexture(m_doorTexture);
-    m_doorSprite.setPosition(m_doorLocation);
+    m_doorSprite.emplace(m_doorTexture);
+    m_doorSprite->setPosition(m_doorLocation);
 
-    // SFML 3.0: FloatRect(position, size)
     m_rect = sf::FloatRect(
         m_doorLocation,
         sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),

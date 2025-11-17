@@ -1,5 +1,5 @@
 #include "include/Character.h"
-#include "Board.h"
+#include "include/Board.h"
 #include <iostream>
 
 Character::Character(const sf::Vector2f& pos)
@@ -10,7 +10,6 @@ Character::Character(const sf::Vector2f& pos)
       m_movingLeft(false),
       m_airTimer(0)
 {
-    // SFML 3.0: FloatRect takes (position, size) as Vector2f
     m_rect = sf::FloatRect(pos, sf::Vector2f(16.0f, 32.0f));
 }
 
@@ -86,10 +85,10 @@ void Character::handleCollisions(Board& board) {
 }
 
 void Character::draw(sf::RenderWindow& window) {
-    if (!m_isAlive) return;
+    if (!m_isAlive || !m_sprite) return;
 
-    m_sprite.setPosition(m_rect.position);
-    window.draw(m_sprite);
+    m_sprite->setPosition(m_rect.position);
+    window.draw(*m_sprite);
 }
 
 void Character::kill() {
@@ -123,20 +122,18 @@ void Character::setJumping(bool jumping) {
     }
 }
 
-// Hot character - DIES IN WATER
 Hot::Hot(const sf::Vector2f& pos) : Character(pos) {
     m_type = "hot";
 
     if (!m_texture.loadFromFile("data/player_images/magmaboy.png")) {
         std::cerr << "Failed to load Hot player texture, using fallback" << std::endl;
-        // SFML 3.0: Image constructor takes size and color
         sf::Image fallback(sf::Vector2u(16, 32), sf::Color::Red);
         if (!m_texture.loadFromImage(fallback)) {
             std::cerr << "Failed to create fallback texture" << std::endl;
         }
     }
 
-    m_sprite.setTexture(m_texture);
+    m_sprite.emplace(m_texture);  // Create sprite with texture
     m_rect.size = sf::Vector2f(static_cast<float>(m_texture.getSize().x),
                                static_cast<float>(m_texture.getSize().y));
 }
@@ -145,20 +142,18 @@ void Hot::update(Board& board) {
     Character::update(board);
 }
 
-// Cold character - DIES IN LAVA
 Cold::Cold(const sf::Vector2f& pos) : Character(pos) {
     m_type = "cold";
 
     if (!m_texture.loadFromFile("data/player_images/hydrogirl.png")) {
         std::cerr << "Failed to load Cold player texture, using fallback" << std::endl;
-        // SFML 3.0: Image constructor takes size and color
         sf::Image fallback(sf::Vector2u(16, 32), sf::Color::Blue);
         if (!m_texture.loadFromImage(fallback)) {
             std::cerr << "Failed to create fallback texture" << std::endl;
         }
     }
 
-    m_sprite.setTexture(m_texture);
+    m_sprite.emplace(m_texture);  // Create sprite with texture
     m_rect.size = sf::Vector2f(static_cast<float>(m_texture.getSize().x),
                                static_cast<float>(m_texture.getSize().y));
 }

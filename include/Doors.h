@@ -2,14 +2,15 @@
 #define DOORS_H
 
 #include <SFML/Graphics.hpp>
+#include <optional>
 #include "Character.h"
 
 class Doors {
 protected:
     sf::FloatRect m_rect;
-    sf::Sprite m_doorSprite;
-    sf::Sprite m_frameSprite;
-    sf::Sprite m_backgroundSprite;
+    std::optional<sf::Sprite> m_doorSprite;
+    std::optional<sf::Sprite> m_frameSprite;
+    std::optional<sf::Sprite> m_backgroundSprite;
     sf::Texture m_doorTexture;
     sf::Texture m_frameTexture;
     sf::Texture m_backgroundTexture;
