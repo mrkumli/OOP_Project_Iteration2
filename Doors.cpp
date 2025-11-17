@@ -1,33 +1,32 @@
 #include "Doors.h"
-#include<iostream>
+#include <iostream>
 
-
-Doors::Doors(const sf::Vector2f& position):
-    m_doorLocation(doorLocation),
-    m_isOpen(false),
-    m_heightRaised(0.0f),
-    m_playerAtDoor(false)
+Doors::Doors(const sf::Vector2f& doorLocation)
+    : m_doorLocation(doorLocation),
+      m_isOpen(false),
+      m_heightRaised(0.0f),
+      m_playerAtDoor(false)
 {
     loadCommonImages();
 }
 
 void Doors::loadCommonImages() {
     if (!m_frameTexture.loadFromFile("data/door_images/door_frame.png")) {
-        std::cerr << "Door Frame Picture Error" << std::endl;
+        std::cerr << "Warning: Failed to load door frame texture" << std::endl;
     }
     if (!m_backgroundTexture.loadFromFile("data/door_images/door_background.png")) {
-        std::cerr << "Door Background Picture Error" << std::endl;
+        std::cerr << "Warning: Failed to load door background texture" << std::endl;
     }
 
     m_frameSprite.setTexture(m_frameTexture);
     m_backgroundSprite.setTexture(m_backgroundTexture);
-    //Sprites Positioning on the screen
+
     m_backgroundSprite.setPosition(m_doorLocation);
-    m_frameSprite.setPosition(m_doorLocation.x - CHUNK_SIZE, m_doorLocation.y - 2 * CHUNK_SIZE);
+    m_frameSprite.setPosition(m_doorLocation.x - CHUNK_SIZE,
+                              m_doorLocation.y - 2 * CHUNK_SIZE);
 }
 
 void Doors::tryRaiseDoor() {
-    //Open door when player is at door
     if (m_playerAtDoor && !m_isOpen) {
         m_doorLocation.y -= DOOR_SPEED;
         m_heightRaised += DOOR_SPEED;
@@ -38,7 +37,6 @@ void Doors::tryRaiseDoor() {
 
         m_doorSprite.setPosition(m_doorLocation);
     }
-    //Door down when the player leaves
     else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
         m_doorLocation.y += DOOR_SPEED;
         m_heightRaised -= DOOR_SPEED;
@@ -62,78 +60,60 @@ sf::FloatRect Doors::getRect() const {
     return m_rect;
 }
 
-// ------------
-// HOT Door implementation
-// -------------
-FireDoor::FireDoor(const sf::Vector2f& doorLocation):
-    Doors(doorLocation)
+// FireDoor - HOT PLAYER ONLY
+FireDoor::FireDoor(const sf::Vector2f& doorLocation)
+    : Doors(doorLocation)
 {
     if (!m_doorTexture.loadFromFile("data/door_images/fire_door.png")) {
-        std::cerr << "Fire Door Picture Error" << std::endl;
+        std::cerr << "Warning: Failed to load fire door texture" << std::endl;
     }
     m_doorSprite.setTexture(m_doorTexture);
     m_doorSprite.setPosition(m_doorLocation);
 
-    //hitbox for collision
-    m_rect = sf::FloatRect(
-        m_doorLocation,
-        sf::Vector2f(m_doorTexture.getSize().x, m_doorTexture.getSize().y)
-        );
+    m_rect = sf::FloatRect(m_doorLocation,
+                          sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
+                                      static_cast<float>(m_doorTexture.getSize().y)));
 }
 
 void FireDoor::tryOpen(Character& player) {
-    //player collision with door check
     if (player.getRect().findIntersection(m_rect)) {
         if (player.getType() == "hot") {
             m_playerAtDoor = true;
-            std::cout << "Hot player at Fire Door!" << std::endl;
-        }
-        else {
+        } else {
             m_playerAtDoor = false;
-            std::cout << "Cold player cannot open Fire Door!" << std::endl;
         }
-    }
-    else {
+    } else {
         m_playerAtDoor = false;
     }
-    //raise up or down the door on player interaction
+
     tryRaiseDoor();
 }
 
-// ------------
-// Cold Door implementation
-// -------------
-WaterDoor::WaterDoor(const sf::Vector2f& doorLocation):
-    Doors(doorLocation)
+// WaterDoor - COLD PLAYER ONLY
+WaterDoor::WaterDoor(const sf::Vector2f& doorLocation)
+    : Doors(doorLocation)
 {
     if (!m_doorTexture.loadFromFile("data/door_images/water_door.png")) {
-        std::cerr << "Water Door Picture Error" << std::endl;
+        std::cerr << "Warning: Failed to load water door texture" << std::endl;
     }
     m_doorSprite.setTexture(m_doorTexture);
     m_doorSprite.setPosition(m_doorLocation);
 
-    //hitbox for collision
-    m_rect = sf::FloatRect(
-        m_doorLocation,
-        sf::Vector2f(m_doorTexture.getSize().x,m_doorTexture.getSize().y)
-        );
+    m_rect = sf::FloatRect(m_doorLocation,
+                          sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
+                                      static_cast<float>(m_doorTexture.getSize().y)));
 }
 
 void WaterDoor::tryOpen(Character& player) {
-    //player collision with door check
     if (player.getRect().findIntersection(m_rect)) {
         if (player.getType() == "cold") {
             m_playerAtDoor = true;
-            std::cout << "Cold player at Water Door!" << std::endl;
-        }
-        else {
+        } else {
             m_playerAtDoor = false;
-            std::cout << "Hot player cannot open Water Door!" << std::endl;
         }
-    }
-    else {
+    } else {
         m_playerAtDoor = false;
     }
-    //raise up or down the door on player interaction
+
     tryRaiseDoor();
 }
