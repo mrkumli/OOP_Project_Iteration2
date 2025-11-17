@@ -57,20 +57,33 @@ void Character::handleCollisions(Board& board) {
         if (intersection) {
             sf::FloatRect overlap = *intersection;
 
+            // Determine if collision is more vertical or horizontal
             if (overlap.size.x > overlap.size.y) {
+                // Vertical collision (top or bottom)
+
+                // Character is ABOVE the block (standing on it)
                 if (m_rect.position.y < block.position.y) {
-                    m_rect.position.y = block.position.y + block.size.y;
-                    m_yVelocity = 0.0f;
-                    collisionTop = true;
-                } else {
+                    // Keep character on TOP of the block
                     m_rect.position.y = block.position.y - m_rect.size.y;
                     m_yVelocity = 0.0f;
                     collisionBottom = true;
                 }
+                // Character is BELOW the block (hitting ceiling)
+                else {
+                    // Push character DOWN below the block
+                    m_rect.position.y = block.position.y + block.size.y;
+                    m_yVelocity = 0.0f;
+                    collisionTop = true;
+                }
             } else {
+                // Horizontal collision (left or right)
+
+                // Character is to the LEFT of the block
                 if (m_rect.position.x < block.position.x) {
                     m_rect.position.x = block.position.x - m_rect.size.x;
-                } else {
+                }
+                // Character is to the RIGHT of the block
+                else {
                     m_rect.position.x = block.position.x + block.size.x;
                 }
             }
@@ -133,7 +146,7 @@ Hot::Hot(const sf::Vector2f& pos) : Character(pos) {
         }
     }
 
-    m_sprite.emplace(m_texture);  // Create sprite with texture
+    m_sprite.emplace(m_texture);
     m_rect.size = sf::Vector2f(static_cast<float>(m_texture.getSize().x),
                                static_cast<float>(m_texture.getSize().y));
 }
@@ -153,7 +166,7 @@ Cold::Cold(const sf::Vector2f& pos) : Character(pos) {
         }
     }
 
-    m_sprite.emplace(m_texture);  // Create sprite with texture
+    m_sprite.emplace(m_texture);
     m_rect.size = sf::Vector2f(static_cast<float>(m_texture.getSize().x),
                                static_cast<float>(m_texture.getSize().y));
 }
