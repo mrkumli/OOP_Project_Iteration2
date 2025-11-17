@@ -1,4 +1,4 @@
-#include "Character.h"
+#include "include/Character.h"
 #include "Board.h"
 #include <iostream>
 

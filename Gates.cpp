@@ -1,5 +1,5 @@
 // Gates.cpp
-#include "Gates.h"
+#include "include/Gates.h"
 #include <iostream>
 
 Gates::Gates(const sf::Vector2f& gateLocation, const std::vector<sf::Vector2f>& plateLocations)
