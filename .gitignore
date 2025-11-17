@@ -6,6 +6,9 @@
 # Ignore SFML DLLs (We don't upload big binary files)
 *.dll
 
+# Ignore all Pixil files
+*.pixil
+
 # Ignore Zed and VS Code settings
 .zed/
 .vscode/

@@ -1,4 +1,4 @@
-#include "Controller.h"
+#include "include/Controller.h"
 
 // ArrowsController - Controls Hot Player
 void ArrowsController::controlPlayer(const sf::Event& event, Character& player) {

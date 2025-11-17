@@ -2,7 +2,6 @@
 #include "Board.h"
 #include <iostream>
 
-// Character base class implementation
 Character::Character(const sf::Vector2f& pos)
     : m_isAlive(true),
       m_yVelocity(0.0f),
@@ -11,7 +10,8 @@ Character::Character(const sf::Vector2f& pos)
       m_movingLeft(false),
       m_airTimer(0)
 {
-    m_rect = sf::FloatRect(pos.x, pos.y, 16.0f, 32.0f);
+    // SFML 3.0: FloatRect takes (position, size) as Vector2f
+    m_rect = sf::FloatRect(pos, sf::Vector2f(16.0f, 32.0f));
 }
 
 void Character::update(Board& board) {
@@ -22,13 +22,11 @@ void Character::update(Board& board) {
 }
 
 void Character::calcMovement() {
-    // Motion constants
     const float LATERAL_SPEED = 3.0f;
     const float JUMP_SPEED = -5.0f;
     const float GRAVITY = 0.2f;
     const float TERMINAL_VELOCITY = 3.0f;
 
-    // Horizontal movement
     if (m_movingRight) {
         m_rect.position.x += LATERAL_SPEED;
     }
@@ -36,7 +34,6 @@ void Character::calcMovement() {
         m_rect.position.x -= LATERAL_SPEED;
     }
 
-    // Vertical movement
     if (m_isJumping) {
         m_yVelocity = JUMP_SPEED;
         m_isJumping = false;
@@ -45,7 +42,6 @@ void Character::calcMovement() {
     m_rect.position.y += m_yVelocity;
     m_yVelocity += GRAVITY;
 
-    // Terminal velocity
     if (m_yVelocity > TERMINAL_VELOCITY) {
         m_yVelocity = TERMINAL_VELOCITY;
     }
@@ -57,40 +53,31 @@ void Character::handleCollisions(Board& board) {
     bool collisionBottom = false;
     bool collisionTop = false;
 
-    // Check collisions with all solid blocks
     for (const auto& block : solidBlocks) {
         auto intersection = m_rect.findIntersection(block);
         if (intersection) {
             sf::FloatRect overlap = *intersection;
 
-            // Vertical collision (hit top or bottom)
             if (overlap.size.x > overlap.size.y) {
                 if (m_rect.position.y < block.position.y) {
-                    // Hit bottom of block (player going up)
                     m_rect.position.y = block.position.y + block.size.y;
                     m_yVelocity = 0.0f;
                     collisionTop = true;
                 } else {
-                    // Hit top of block (player going down)
                     m_rect.position.y = block.position.y - m_rect.size.y;
                     m_yVelocity = 0.0f;
                     collisionBottom = true;
                 }
-            }
-            // Horizontal collision (hit left or right)
-            else {
+            } else {
                 if (m_rect.position.x < block.position.x) {
-                    // Hit left side of block
                     m_rect.position.x = block.position.x - m_rect.size.x;
                 } else {
-                    // Hit right side of block
                     m_rect.position.x = block.position.x + block.size.x;
                 }
             }
         }
     }
 
-    // Update air timer
     if (collisionBottom) {
         m_airTimer = 0;
     } else {
@@ -141,10 +128,12 @@ Hot::Hot(const sf::Vector2f& pos) : Character(pos) {
     m_type = "hot";
 
     if (!m_texture.loadFromFile("data/player_images/magmaboy.png")) {
-        std::cerr << "Failed to load Hot player texture" << std::endl;
-        sf::Image fallback;
-        fallback.create(16, 32, sf::Color::Red);
-        m_texture.loadFromImage(fallback);
+        std::cerr << "Failed to load Hot player texture, using fallback" << std::endl;
+        // SFML 3.0: Image constructor takes size and color
+        sf::Image fallback(sf::Vector2u(16, 32), sf::Color::Red);
+        if (!m_texture.loadFromImage(fallback)) {
+            std::cerr << "Failed to create fallback texture" << std::endl;
+        }
     }
 
     m_sprite.setTexture(m_texture);
@@ -161,10 +150,12 @@ Cold::Cold(const sf::Vector2f& pos) : Character(pos) {
     m_type = "cold";
 
     if (!m_texture.loadFromFile("data/player_images/hydrogirl.png")) {
-        std::cerr << "Failed to load Cold player texture" << std::endl;
-        sf::Image fallback;
-        fallback.create(16, 32, sf::Color::Blue);
-        m_texture.loadFromImage(fallback);
+        std::cerr << "Failed to load Cold player texture, using fallback" << std::endl;
+        // SFML 3.0: Image constructor takes size and color
+        sf::Image fallback(sf::Vector2u(16, 32), sf::Color::Blue);
+        if (!m_texture.loadFromImage(fallback)) {
+            std::cerr << "Failed to create fallback texture" << std::endl;
+        }
     }
 
     m_sprite.setTexture(m_texture);

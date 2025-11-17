@@ -12,7 +12,7 @@ LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 all: compile
 
 compile:
-	$(CXX) test.cpp -o $(OUTPUT) $(INCLUDES) $(LIB_PATH) $(LIBS)
+	$(CXX) Board.cpp Character.cpp Doors.cpp main.cpp LevelSelect.cpp Gates.cpp -o $(OUTPUT) $(INCLUDES) $(LIB_PATH) $(LIBS)
 
 run: compile
 	./$(OUTPUT)

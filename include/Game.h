@@ -1,9 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
-
 #include <SFML/Graphics.hpp>
 #include <list>
-#include <memory>
 #include "Board.h"
 #include "Character.h"
 #include "Doors.h"
@@ -19,12 +17,6 @@ private:
     std::list<Doors*> m_doors;
     std::list<Gates*> m_gates;
 
-    std::unique_ptr<ArrowsController> m_arrowsController;
-    std::unique_ptr<WASDController> m_wasdController;
-
-    Character* m_hotPlayer;
-    Character* m_coldPlayer;
-
 public:
     Game();
     ~Game();
@@ -39,8 +31,6 @@ public:
 private:
     void handleEvents();
     void cleanup();
-    void initializeLevel1();
-    void drawBoard();
 };
 
 #endif // GAME_H

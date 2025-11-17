@@ -1,25 +1,31 @@
+// Gates.cpp
 #include "Gates.h"
 #include <iostream>
 
 Gates::Gates(const sf::Vector2f& gateLocation, const std::vector<sf::Vector2f>& plateLocations)
-    : m_gateLocation(gateLocation),
+    : m_gateTexture(),
+      m_plateTexture(),
+      m_gateLocation(gateLocation),
       m_plateLocations(plateLocations),
       m_isPressed(false),
       m_isOpen(false)
 {
     loadImages();
 
-    m_gateRect = sf::FloatRect(m_gateLocation,
-                               sf::Vector2f(static_cast<float>(m_gateTexture.getSize().x),
-                                          static_cast<float>(m_gateTexture.getSize().y)));
+    m_gateRect = sf::FloatRect(
+        m_gateLocation,
+        sf::Vector2f(static_cast<float>(m_gateTexture.getSize().x),
+                    static_cast<float>(m_gateTexture.getSize().y))
+    );
 
     for (const auto& location : m_plateLocations) {
-        m_plateRects.emplace_back(location,
-                                 sf::Vector2f(static_cast<float>(m_plateTexture.getSize().x),
-                                            static_cast<float>(m_plateTexture.getSize().y)));
+        m_plateRects.emplace_back(
+            location,
+            sf::Vector2f(static_cast<float>(m_plateTexture.getSize().x),
+                        static_cast<float>(m_plateTexture.getSize().y))
+        );
 
-        sf::Sprite plateSprite;
-        plateSprite.setTexture(m_plateTexture);
+        sf::Sprite plateSprite(m_plateTexture);
         plateSprite.setPosition(location);
         m_plateSprites.push_back(plateSprite);
     }

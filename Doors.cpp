@@ -2,7 +2,10 @@
 #include <iostream>
 
 Doors::Doors(const sf::Vector2f& doorLocation)
-    : m_doorLocation(doorLocation),
+    : m_doorTexture(),
+      m_frameTexture(),
+      m_backgroundTexture(),
+      m_doorLocation(doorLocation),
       m_isOpen(false),
       m_heightRaised(0.0f),
       m_playerAtDoor(false)
@@ -22,8 +25,11 @@ void Doors::loadCommonImages() {
     m_backgroundSprite.setTexture(m_backgroundTexture);
 
     m_backgroundSprite.setPosition(m_doorLocation);
-    m_frameSprite.setPosition(m_doorLocation.x - CHUNK_SIZE,
-                              m_doorLocation.y - 2 * CHUNK_SIZE);
+    // SFML 3.0: setPosition takes Vector2f
+    m_frameSprite.setPosition(sf::Vector2f(
+        m_doorLocation.x - CHUNK_SIZE,
+        m_doorLocation.y - 2 * CHUNK_SIZE
+    ));
 }
 
 void Doors::tryRaiseDoor() {
@@ -60,7 +66,6 @@ sf::FloatRect Doors::getRect() const {
     return m_rect;
 }
 
-// FireDoor - HOT PLAYER ONLY
 FireDoor::FireDoor(const sf::Vector2f& doorLocation)
     : Doors(doorLocation)
 {
@@ -70,9 +75,12 @@ FireDoor::FireDoor(const sf::Vector2f& doorLocation)
     m_doorSprite.setTexture(m_doorTexture);
     m_doorSprite.setPosition(m_doorLocation);
 
-    m_rect = sf::FloatRect(m_doorLocation,
-                          sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
-                                      static_cast<float>(m_doorTexture.getSize().y)));
+    // SFML 3.0: FloatRect(position, size)
+    m_rect = sf::FloatRect(
+        m_doorLocation,
+        sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
+                    static_cast<float>(m_doorTexture.getSize().y))
+    );
 }
 
 void FireDoor::tryOpen(Character& player) {
@@ -89,7 +97,6 @@ void FireDoor::tryOpen(Character& player) {
     tryRaiseDoor();
 }
 
-// WaterDoor - COLD PLAYER ONLY
 WaterDoor::WaterDoor(const sf::Vector2f& doorLocation)
     : Doors(doorLocation)
 {
@@ -99,9 +106,12 @@ WaterDoor::WaterDoor(const sf::Vector2f& doorLocation)
     m_doorSprite.setTexture(m_doorTexture);
     m_doorSprite.setPosition(m_doorLocation);
 
-    m_rect = sf::FloatRect(m_doorLocation,
-                          sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
-                                      static_cast<float>(m_doorTexture.getSize().y)));
+    // SFML 3.0: FloatRect(position, size)
+    m_rect = sf::FloatRect(
+        m_doorLocation,
+        sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
+                    static_cast<float>(m_doorTexture.getSize().y))
+    );
 }
 
 void WaterDoor::tryOpen(Character& player) {

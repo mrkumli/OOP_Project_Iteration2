@@ -1,7 +1,12 @@
-#include "include/LevelSelect.h"
+// LevelSelect.cpp
+#include "LevelSelect.h"
 #include <iostream>
 
-LevelSelect::LevelSelect() : m_selectedLevel(0) {
+LevelSelect::LevelSelect()
+    : m_background(),
+      m_backgroundSprite(),
+      m_selectedLevel(0)
+{
     loadImages();
 }
 
@@ -19,8 +24,7 @@ void LevelSelect::loadImages() {
         }
         m_levelTextures[i] = texture;
 
-        sf::Sprite sprite;
-        sprite.setTexture(m_levelTextures[i]);
+        sf::Sprite sprite(m_levelTextures[i]);
         m_levelSprites[i] = sprite;
     }
 }
@@ -37,7 +41,7 @@ void LevelSelect::draw(sf::RenderWindow& window) {
         float x = (window.getSize().x - sprite.getGlobalBounds().size.x) / 2.0f;
         float y = startY + (i - 1) * spacing;
 
-        sprite.setPosition(x, y);
+        sprite.setPosition(sf::Vector2f(x, y));  // SFML 3.0: Vector2f
         window.draw(sprite);
     }
 }
