@@ -19,9 +19,13 @@ void LevelSelect::loadImages() {
         if (!texture.loadFromFile(path)) {
             std::cerr << "Warning: Failed to load level texture: " << path << std::endl;
         }
+
+        // Insert texture into the map first
         m_levelTextures[i] = texture;
 
-        m_levelSprites[i] = sf::Sprite(m_levelTextures[i]);
+        // FIX: Use emplace/insert instead of operator[] because sf::Sprite
+        // has no default constructor in SFML 3.0.
+        m_levelSprites.emplace(i, sf::Sprite(m_levelTextures[i]));
     }
 }
 
@@ -32,13 +36,16 @@ void LevelSelect::draw(sf::RenderWindow& window) {
     float spacing = 50.0f;
 
     for (int i = 1; i <= 5; ++i) {
-        sf::Sprite& sprite = m_levelSprites[i];
+        // Check if sprite exists before accessing to avoid crash/creation
+        if (m_levelSprites.find(i) != m_levelSprites.end()) {
+            sf::Sprite& sprite = m_levelSprites.at(i);
 
-        float x = (window.getSize().x - sprite.getGlobalBounds().size.x) / 2.0f;
-        float y = startY + (i - 1) * spacing;
+            float x = (window.getSize().x - sprite.getGlobalBounds().size.x) / 2.0f;
+            float y = startY + (i - 1) * spacing;
 
-        sprite.setPosition(sf::Vector2f(x, y));
-        window.draw(sprite);
+            sprite.setPosition(sf::Vector2f(x, y));
+            window.draw(sprite);
+        }
     }
 }
 
