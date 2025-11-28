@@ -1,133 +1,133 @@
 #include "include/Doors.h"
 #include <iostream>
 
-Doors::Doors(const sf::Vector2f& doorLocation)
-    : m_doorLocation(doorLocation),
-      m_isOpen(false),
-      m_heightRaised(0.0f),
-      m_playerAtDoor(false)
-{
-    loadCommonImages();
-}
+// Doors::Doors(const sf::Vector2f& doorLocation)
+//     : m_doorLocation(doorLocation),
+//       m_isOpen(false),
+//       m_heightRaised(0.0f),
+//       m_playerAtDoor(false)
+// {
+//     loadCommonImages();
+// }
 
-void Doors::loadCommonImages() {
-    if (!m_frameTexture.loadFromFile("data/door_images/door_frame.png")) {
-        std::cerr << "Warning: Failed to load door frame texture" << std::endl;
-    }
-    if (!m_backgroundTexture.loadFromFile("data/door_images/door_background.png")) {
-        std::cerr << "Warning: Failed to load door background texture" << std::endl;
-    }
+// void Doors::loadCommonImages() {
+//     if (!m_frameTexture.loadFromFile("data/door_images/door_frame.png")) {
+//         std::cerr << "Warning: Failed to load door frame texture" << std::endl;
+//     }
+//     if (!m_backgroundTexture.loadFromFile("data/door_images/door_background.png")) {
+//         std::cerr << "Warning: Failed to load door background texture" << std::endl;
+//     }
 
-    m_frameSprite.emplace(m_frameTexture);
-    m_backgroundSprite.emplace(m_backgroundTexture);
+//     m_frameSprite.emplace(m_frameTexture);
+//     m_backgroundSprite.emplace(m_backgroundTexture);
 
-    m_backgroundSprite->setPosition(m_doorLocation);
-    m_frameSprite->setPosition(sf::Vector2f(
-        m_doorLocation.x - CHUNK_SIZE,
-        m_doorLocation.y - 2 * CHUNK_SIZE
-    ));
-}
+//     m_backgroundSprite->setPosition(m_doorLocation);
+//     m_frameSprite->setPosition(sf::Vector2f(
+//         m_doorLocation.x - CHUNK_SIZE,
+//         m_doorLocation.y - 2 * CHUNK_SIZE
+//     ));
+// }
 
-void Doors::tryRaiseDoor() {
-    if (m_playerAtDoor && !m_isOpen) {
-        m_doorLocation.y -= DOOR_SPEED;
-        m_heightRaised += DOOR_SPEED;
+// void Doors::tryRaiseDoor() {
+//     if (m_playerAtDoor && !m_isOpen) {
+//         m_doorLocation.y -= DOOR_SPEED;
+//         m_heightRaised += DOOR_SPEED;
 
-        if (m_heightRaised >= 31.0f) {
-            m_isOpen = true;
-        }
+//         if (m_heightRaised >= 31.0f) {
+//             m_isOpen = true;
+//         }
 
-        if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
-        if (m_backgroundSprite) m_backgroundSprite->setPosition(m_doorLocation);
-    }
-    else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
-        m_doorLocation.y += DOOR_SPEED;
-        m_heightRaised -= DOOR_SPEED;
+//         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
+//         if (m_backgroundSprite) m_backgroundSprite->setPosition(m_doorLocation);
+//     }
+//     else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
+//         m_doorLocation.y += DOOR_SPEED;
+//         m_heightRaised -= DOOR_SPEED;
 
-        if (m_heightRaised <= 0.0f) {
-            m_heightRaised = 0.0f;
-            m_isOpen = false;
-        }
+//         if (m_heightRaised <= 0.0f) {
+//             m_heightRaised = 0.0f;
+//             m_isOpen = false;
+//         }
 
-        if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
-        if (m_backgroundSprite) m_backgroundSprite->setPosition(m_doorLocation);
-    }
-}
+//         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
+//         if (m_backgroundSprite) m_backgroundSprite->setPosition(m_doorLocation);
+//     }
+// }
 
-void Doors::draw(sf::RenderWindow& window) {
-    if (m_backgroundSprite) window.draw(*m_backgroundSprite);
-    if (m_doorSprite) window.draw(*m_doorSprite);
-    if (m_frameSprite) window.draw(*m_frameSprite);
-}
+// void Doors::draw(sf::RenderWindow& window) {
+//     if (m_backgroundSprite) window.draw(*m_backgroundSprite);
+//     if (m_doorSprite) window.draw(*m_doorSprite);
+//     if (m_frameSprite) window.draw(*m_frameSprite);
+// }
 
-bool Doors::isOpen() const {
-    return m_isOpen;
-}
+// bool Doors::isOpen() const {
+//     return m_isOpen;
+// }
 
-sf::FloatRect Doors::getRect() const {
-    return m_rect;
-}
+// sf::FloatRect Doors::getRect() const {
+//     return m_rect;
+// }
 
-FireDoor::FireDoor(const sf::Vector2f& doorLocation)
-    : Doors(doorLocation)
-{
-    if (!m_doorTexture.loadFromFile("data/door_images/fire_door.png")) {
-        std::cerr << "Warning: Failed to load fire door texture" << std::endl;
-    }
-    m_doorSprite.emplace(m_doorTexture);
-    m_doorSprite->setPosition(m_doorLocation);
+// FireDoor::FireDoor(const sf::Vector2f& doorLocation)
+//     : Doors(doorLocation)
+// {
+//     if (!m_doorTexture.loadFromFile("data/door_images/fire_door.png")) {
+//         std::cerr << "Warning: Failed to load fire door texture" << std::endl;
+//     }
+//     m_doorSprite.emplace(m_doorTexture);
+//     m_doorSprite->setPosition(m_doorLocation);
 
-    m_rect = sf::FloatRect(
-        m_doorLocation,
-        sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
-                    static_cast<float>(m_doorTexture.getSize().y))
-    );
-}
+//     m_rect = sf::FloatRect(
+//         m_doorLocation,
+//         sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
+//                     static_cast<float>(m_doorTexture.getSize().y))
+//     );
+// }
 
-void FireDoor::tryOpen(Character& player) {
-    bool wasAtDoor = m_playerAtDoor;
+// void FireDoor::tryOpen(Character& player) {
+//     bool wasAtDoor = m_playerAtDoor;
 
-    if (player.getRect().findIntersection(m_rect)) {
-        if (player.getType() == "hot") {
-            m_playerAtDoor = true;
-        } else {
-            m_playerAtDoor = false;
-        }
-    } else {
-        m_playerAtDoor = false;
-    }
+//     if (player.getRect().findIntersection(m_rect)) {
+//         if (player.getType() == "hot") {
+//             m_playerAtDoor = true;
+//         } else {
+//             m_playerAtDoor = false;
+//         }
+//     } else {
+//         m_playerAtDoor = false;
+//     }
 
-    tryRaiseDoor();
-}
+//     tryRaiseDoor();
+// }
 
-WaterDoor::WaterDoor(const sf::Vector2f& doorLocation)
-    : Doors(doorLocation)
-{
-    if (!m_doorTexture.loadFromFile("data/door_images/water_door.png")) {
-        std::cerr << "Warning: Failed to load water door texture" << std::endl;
-    }
-    m_doorSprite.emplace(m_doorTexture);
-    m_doorSprite->setPosition(m_doorLocation);
+// WaterDoor::WaterDoor(const sf::Vector2f& doorLocation)
+//     : Doors(doorLocation)
+// {
+//     if (!m_doorTexture.loadFromFile("data/door_images/water_door.png")) {
+//         std::cerr << "Warning: Failed to load water door texture" << std::endl;
+//     }
+//     m_doorSprite.emplace(m_doorTexture);
+//     m_doorSprite->setPosition(m_doorLocation);
 
-    m_rect = sf::FloatRect(
-        m_doorLocation,
-        sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
-                    static_cast<float>(m_doorTexture.getSize().y))
-    );
-}
+//     m_rect = sf::FloatRect(
+//         m_doorLocation,
+//         sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
+//                     static_cast<float>(m_doorTexture.getSize().y))
+//     );
+// }
 
-void WaterDoor::tryOpen(Character& player) {
-    bool wasAtDoor = m_playerAtDoor;
+// void WaterDoor::tryOpen(Character& player) {
+//     bool wasAtDoor = m_playerAtDoor;
 
-    if (player.getRect().findIntersection(m_rect)) {
-        if (player.getType() == "cold") {
-            m_playerAtDoor = true;
-        } else {
-            m_playerAtDoor = false;
-        }
-    } else {
-        m_playerAtDoor = false;
-    }
+//     if (player.getRect().findIntersection(m_rect)) {
+//         if (player.getType() == "cold") {
+//             m_playerAtDoor = true;
+//         } else {
+//             m_playerAtDoor = false;
+//         }
+//     } else {
+//         m_playerAtDoor = false;
+//     }
 
-    tryRaiseDoor();
-}
+//     tryRaiseDoor();
+// }

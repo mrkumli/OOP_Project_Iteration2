@@ -1,1 +1,15 @@
-make: *** No targets specified and no makefile found.  Stop.
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x0): multiple definition of `Doors::Doors(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x0): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x0): multiple definition of `Doors::Doors(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x0): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x18c): multiple definition of `Doors::loadCommonImages()'; Doors.o:Doors.cpp:(.text+0x18c): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x406): multiple definition of `Doors::tryRaiseDoor()'; Doors.o:Doors.cpp:(.text+0x406): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x662): multiple definition of `Doors::draw(sf::RenderWindow&)'; Doors.o:Doors.cpp:(.text+0x5b6): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x754): multiple definition of `Doors::isOpen() const'; Doors.o:Doors.cpp:(.text+0x6a8): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x76a): multiple definition of `Doors::getRect() const'; Doors.o:Doors.cpp:(.text+0x6be): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x794): multiple definition of `FireDoor::FireDoor(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x6e8): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x794): multiple definition of `FireDoor::FireDoor(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x6e8): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x9c8): multiple definition of `FireDoor::tryOpen(Character&)'; Doors.o:Doors.cpp:(.text+0x91c): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0xab8): multiple definition of `WaterDoor::WaterDoor(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x9f4): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0xab8): multiple definition of `WaterDoor::WaterDoor(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x9f4): first defined here
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0xcec): multiple definition of `WaterDoor::tryOpen(Character&)'; Doors.o:Doors.cpp:(.text+0xc28): first defined here
+collect2.exe: error: ld returned 1 exit status
+make: *** [Makefile:30: game.exe] Error 1
