@@ -71,7 +71,6 @@ void Board::generateCollidables() {
             float xPos = static_cast<float>(x * CHUNK_SIZE);
             float yPos = static_cast<float>(y * CHUNK_SIZE);
 
-            // SFML 3.0: FloatRect(position, size) - both Vector2f
             if (tile != "0" && tile != "2" && tile != "3" && tile != "4") {
                 m_solidBlocks.emplace_back(
                     sf::Vector2f(xPos, yPos),

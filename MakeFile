@@ -1,18 +1,58 @@
-# 1. Variables
+# Compiler and output settings
 SFML_PATH = C:/libraries/SFML-3.0.2
 CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra
 OUTPUT = game.exe
 
-# 2. The Setup
+# Include and library paths
 INCLUDES = -I"$(SFML_PATH)/include"
 LIB_PATH = -L"$(SFML_PATH)/lib"
 LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
-# 3. The Targets
-all: compile
+# Source files
+SOURCES = Board.cpp \
+          Character.cpp \
+          Controller.cpp \
+          Doors.cpp \
+          Gates.cpp \
+          LevelSelect.cpp \
+          Game.cpp \
+          main.cpp
 
-compile:
-	$(CXX) Board.cpp Character.cpp Doors.cpp main.cpp LevelSelect.cpp Gates.cpp Game.cpp Controller.cpp -o $(OUTPUT) $(INCLUDES) $(LIB_PATH) $(LIBS)
+# Object files (derived from sources)
+OBJECTS = $(SOURCES:.cpp=.o)
 
-run: compile
+# Default target
+all: $(OUTPUT)
+
+# Link object files to create executable
+$(OUTPUT): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(OUTPUT) $(LIB_PATH) $(LIBS)
+	@echo "Build complete! Run with: make run"
+
+# Compile source files to object files
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+# Run the game
+run: $(OUTPUT)
 	./$(OUTPUT)
+
+# Clean build artifacts
+clean:
+	rm -f $(OBJECTS) $(OUTPUT)
+	@echo "Clean complete!"
+
+# Rebuild everything
+rebuild: clean all
+
+# Help target
+help:
+	@echo "Available targets:"
+	@echo "  make        - Build the game"
+	@echo "  make run    - Build and run the game"
+	@echo "  make clean  - Remove build artifacts"
+	@echo "  make rebuild - Clean and rebuild"
+	@echo "  make help   - Show this help message"
+
+.PHONY: all run clean rebuild help

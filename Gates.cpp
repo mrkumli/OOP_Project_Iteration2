@@ -1,94 +1,133 @@
-#include "include/Gates.h"
+#include "include/Doors.h"
 #include <iostream>
 
-Gates::Gates(const sf::Vector2f& gateLocation, const std::vector<sf::Vector2f>& plateLocations)
-    : m_gateLocation(gateLocation),
-      m_plateLocations(plateLocations),
-      m_isPressed(false),
-      m_isOpen(false)
+Doors::Doors(const sf::Vector2f& doorLocation)
+    : m_doorLocation(doorLocation),
+      m_isOpen(false),
+      m_heightRaised(0.0f),
+      m_playerAtDoor(false)
 {
-    loadImages();
-
-    m_gateRect = sf::FloatRect(
-        m_gateLocation,
-        sf::Vector2f(static_cast<float>(m_gateTexture.getSize().x),
-                    static_cast<float>(m_gateTexture.getSize().y))
-    );
-
-    for (const auto& location : m_plateLocations) {
-        m_plateRects.emplace_back(
-            location,
-            sf::Vector2f(static_cast<float>(m_plateTexture.getSize().x),
-                        static_cast<float>(m_plateTexture.getSize().y))
-        );
-
-        sf::Sprite plateSprite(m_plateTexture);
-        plateSprite.setPosition(location);
-        m_plateSprites.push_back(plateSprite);
-    }
-
-    m_gateSprite.emplace(m_gateTexture);
-    m_gateSprite->setPosition(m_gateLocation);
+    loadCommonImages();
 }
 
-void Gates::loadImages() {
-    if (!m_gateTexture.loadFromFile("data/gates_and_plates/gate.png")) {
-        std::cerr << "Warning: Failed to load gate texture" << std::endl;
+void Doors::loadCommonImages() {
+    if (!m_frameTexture.loadFromFile("data/door_images/door_frame.png")) {
+        std::cerr << "Warning: Failed to load door frame texture" << std::endl;
+    }
+    if (!m_backgroundTexture.loadFromFile("data/door_images/door_background.png")) {
+        std::cerr << "Warning: Failed to load door background texture" << std::endl;
     }
 
-    if (!m_plateTexture.loadFromFile("data/gates_and_plates/plate.png")) {
-        std::cerr << "Warning: Failed to load plate texture" << std::endl;
-    }
+    m_frameSprite.emplace(m_frameTexture);
+    m_backgroundSprite.emplace(m_backgroundTexture);
+
+    m_backgroundSprite->setPosition(m_doorLocation);
+    m_frameSprite->setPosition(sf::Vector2f(
+        m_doorLocation.x - CHUNK_SIZE,
+        m_doorLocation.y - 2 * CHUNK_SIZE
+    ));
 }
 
-void Gates::tryOpen(const std::list<Character*>& players) {
-    bool platePressed = false;
+void Doors::tryRaiseDoor() {
+    if (m_playerAtDoor && !m_isOpen) {
+        m_doorLocation.y -= DOOR_SPEED;
+        m_heightRaised += DOOR_SPEED;
 
-    for (const auto* player : players) {
-        if (!player || player->isDead()) continue;
-
-        for (const auto& plateRect : m_plateRects) {
-            if (checkCollision(player->getRect(), plateRect)) {
-                platePressed = true;
-                break;
-            }
+        if (m_heightRaised >= 31.0f) {
+            m_isOpen = true;
         }
 
-        if (platePressed) break;
+        if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
+        if (m_backgroundSprite) m_backgroundSprite->setPosition(m_doorLocation);
     }
+    else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
+        m_doorLocation.y += DOOR_SPEED;
+        m_heightRaised -= DOOR_SPEED;
 
-    m_isPressed = platePressed;
+        if (m_heightRaised <= 0.0f) {
+            m_heightRaised = 0.0f;
+            m_isOpen = false;
+        }
 
-    if (m_isPressed && !m_isOpen) {
-        m_gateLocation.y -= 2 * CHUNK_SIZE;
-        m_gateRect.position.y -= 2 * CHUNK_SIZE;
-        if (m_gateSprite) m_gateSprite->setPosition(m_gateLocation);
-        m_isOpen = true;
-    }
-    else if (!m_isPressed && m_isOpen) {
-        m_gateLocation.y += 2 * CHUNK_SIZE;
-        m_gateRect.position.y += 2 * CHUNK_SIZE;
-        if (m_gateSprite) m_gateSprite->setPosition(m_gateLocation);
-        m_isOpen = false;
+        if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
+        if (m_backgroundSprite) m_backgroundSprite->setPosition(m_doorLocation);
     }
 }
 
-void Gates::draw(sf::RenderWindow& window) {
-    if (m_gateSprite) window.draw(*m_gateSprite);
+void Doors::draw(sf::RenderWindow& window) {
+    if (m_backgroundSprite) window.draw(*m_backgroundSprite);
+    if (m_doorSprite) window.draw(*m_doorSprite);
+    if (m_frameSprite) window.draw(*m_frameSprite);
+}
 
-    for (const auto& plateSprite : m_plateSprites) {
-        window.draw(plateSprite);
+bool Doors::isOpen() const {
+    return m_isOpen;
+}
+
+sf::FloatRect Doors::getRect() const {
+    return m_rect;
+}
+
+FireDoor::FireDoor(const sf::Vector2f& doorLocation)
+    : Doors(doorLocation)
+{
+    if (!m_doorTexture.loadFromFile("data/door_images/fire_door.png")) {
+        std::cerr << "Warning: Failed to load fire door texture" << std::endl;
     }
+    m_doorSprite.emplace(m_doorTexture);
+    m_doorSprite->setPosition(m_doorLocation);
+
+    m_rect = sf::FloatRect(
+        m_doorLocation,
+        sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
+                    static_cast<float>(m_doorTexture.getSize().y))
+    );
 }
 
-sf::FloatRect Gates::getGateRect() const {
-    return m_gateRect;
+void FireDoor::tryOpen(Character& player) {
+    bool wasAtDoor = m_playerAtDoor;
+
+    if (player.getRect().findIntersection(m_rect)) {
+        if (player.getType() == "hot") {
+            m_playerAtDoor = true;
+        } else {
+            m_playerAtDoor = false;
+        }
+    } else {
+        m_playerAtDoor = false;
+    }
+
+    tryRaiseDoor();
 }
 
-const std::vector<sf::FloatRect>& Gates::getPlateRects() const {
-    return m_plateRects;
+WaterDoor::WaterDoor(const sf::Vector2f& doorLocation)
+    : Doors(doorLocation)
+{
+    if (!m_doorTexture.loadFromFile("data/door_images/water_door.png")) {
+        std::cerr << "Warning: Failed to load water door texture" << std::endl;
+    }
+    m_doorSprite.emplace(m_doorTexture);
+    m_doorSprite->setPosition(m_doorLocation);
+
+    m_rect = sf::FloatRect(
+        m_doorLocation,
+        sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x),
+                    static_cast<float>(m_doorTexture.getSize().y))
+    );
 }
 
-bool Gates::checkCollision(const sf::FloatRect& rect1, const sf::FloatRect& rect2) const {
-    return rect1.findIntersection(rect2).has_value();
+void WaterDoor::tryOpen(Character& player) {
+    bool wasAtDoor = m_playerAtDoor;
+
+    if (player.getRect().findIntersection(m_rect)) {
+        if (player.getType() == "cold") {
+            m_playerAtDoor = true;
+        } else {
+            m_playerAtDoor = false;
+        }
+    } else {
+        m_playerAtDoor = false;
+    }
+
+    tryRaiseDoor();
 }
