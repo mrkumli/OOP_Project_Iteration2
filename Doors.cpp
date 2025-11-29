@@ -19,8 +19,8 @@ void Doors::loadCommonImages() {
 
     m_backgroundSprite->setPosition(m_doorLocation);
     m_frameSprite->setPosition(sf::Vector2f(
-        m_doorLocation.x - CHUNK_SIZE,
-        m_doorLocation.y - 2 * CHUNK_SIZE
+        m_doorLocation.x - CHUNK_SIZE/2,
+        m_doorLocation.y - 2 * CHUNK_SIZE/2
     ));
 }
 
@@ -28,18 +28,18 @@ void Doors::tryRaiseDoor() {
     if (m_playerAtDoor && !m_isOpen) {
         m_doorLocation.y -= DOOR_SPEED;
         m_heightRaised += DOOR_SPEED;
-        if (m_heightRaised >= 31.0f) {
+        if (m_heightRaised >= 31.0f && !m_isOpen) {
             m_isOpen = true;
-            std::cout << "[DOOR] Door is now fully OPEN! Height: " << m_heightRaised << std::endl;
+            std::cout << "[DOOR] Door fully OPEN!" << std::endl;
         }
         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
     else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
         m_doorLocation.y += DOOR_SPEED;
         m_heightRaised -= DOOR_SPEED;
-        if (m_heightRaised <= 0.0f) {
+        if (m_heightRaised <= 0.0f && m_isOpen) {
             m_isOpen = false;
-            std::cout << "[DOOR] Door is now CLOSED. Height: " << m_heightRaised << std::endl;
+            std::cout << "[DOOR] Door CLOSED" << std::endl;
         }
         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
@@ -64,22 +64,20 @@ FireDoor::FireDoor(const sf::Vector2f& doorLocation) : Doors(doorLocation) {
 }
 
 void FireDoor::tryOpen(Character& player) {
-    // Create a detection zone around the door
     sf::FloatRect detectionZone = m_rect;
     detectionZone.position.x -= 10.0f;
     detectionZone.position.y -= 10.0f;
     detectionZone.size.x += 20.0f;
     detectionZone.size.y += 20.0f;
 
+    bool wasAtDoor = m_playerAtDoor;
+
     if (player.getRect().findIntersection(detectionZone)) {
         if (player.getType() == "hot") {
             m_playerAtDoor = true;
-            // Only log occasionally to avoid spam
-            static int logCounter = 0;
-            if (logCounter % 60 == 0) {
-                std::cout << "[FIRE DOOR] Hot player near fire door - opening... Height: " << m_heightRaised << std::endl;
+            if (!wasAtDoor) {
+                std::cout << "[FIRE DOOR] Hot player approaching door..." << std::endl;
             }
-            logCounter++;
         } else {
             m_playerAtDoor = false;
         }
@@ -99,22 +97,20 @@ WaterDoor::WaterDoor(const sf::Vector2f& doorLocation) : Doors(doorLocation) {
 }
 
 void WaterDoor::tryOpen(Character& player) {
-    // Create a detection zone around the door
     sf::FloatRect detectionZone = m_rect;
     detectionZone.position.x -= 10.0f;
     detectionZone.position.y -= 10.0f;
     detectionZone.size.x += 20.0f;
     detectionZone.size.y += 20.0f;
 
+    bool wasAtDoor = m_playerAtDoor;
+
     if (player.getRect().findIntersection(detectionZone)) {
         if (player.getType() == "cold") {
             m_playerAtDoor = true;
-            // Only log occasionally to avoid spam
-            static int logCounter = 0;
-            if (logCounter % 60 == 0) {
-                std::cout << "[WATER DOOR] Cold player near water door - opening... Height: " << m_heightRaised << std::endl;
+            if (!wasAtDoor) {
+                std::cout << "[WATER DOOR] Cold player approaching door..." << std::endl;
             }
-            logCounter++;
         } else {
             m_playerAtDoor = false;
         }

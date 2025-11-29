@@ -80,6 +80,7 @@ int main() {
 
         MenuState menuState = MenuState::MainMenu;
         int selectedOption = 0;
+        int selectedLevel = 1;
         LevelSelect levelSelect;
         Game* game = nullptr;
 
@@ -101,10 +102,11 @@ int main() {
                             case sf::Keyboard::Key::Enter:
                                 if (selectedOption >= 0 && selectedOption <= 4) {
                                     // Level 1-5 selected
-                                    std::cout << "\nStarting Level " << (selectedOption + 1) << "..." << std::endl;
+                                    selectedLevel = selectedOption + 1;  // Calculate correct level
+                                    std::cout << "\nStarting Level " << selectedLevel << "..." << std::endl;
                                     menuState = MenuState::InGame;
                                     if (game) delete game;
-                                    game = new Game();
+                                    game = new Game(selectedLevel);  // FIXED: Pass selected level
                                 } else if (selectedOption == 5) {
                                     // Quit
                                     window.close();

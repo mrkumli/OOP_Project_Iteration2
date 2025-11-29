@@ -44,9 +44,9 @@ void Game::initializeLevel(int levelNumber) {
     m_players.push_back(m_hotPlayer);
     m_players.push_back(m_coldPlayer);
 
-    // Doors at the top
-    m_doors.push_back(new FireDoor(sf::Vector2f(48.0f, 48.0f)));
-    m_doors.push_back(new WaterDoor(sf::Vector2f(560.0f, 48.0f)));
+    // Doors at the top - using row 3 (y = 48) for proper positioning
+    m_doors.push_back(new FireDoor(sf::Vector2f(32.0f, 32.0f)));    // Top left
+    m_doors.push_back(new WaterDoor(sf::Vector2f(560.0f, 32.0f)));  // Top right
 
     // Gate with proper button placement
     // Left button, gate in middle, right button
