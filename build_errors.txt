@@ -1,0 +1,17 @@
+In file included from Gates.cpp:1:
+include/Gates.h: In constructor 'Gates::Gates(const sf::Vector2f&, const std::vector<sf::Vector2<float> >&)':
+include/Gates.h:22:31: warning: 'Gates::m_plateLocations' will be initialized after [-Wreorder]
+   22 |     std::vector<sf::Vector2f> m_plateLocations;
+      |                               ^~~~~~~~~~~~~~~~
+include/Gates.h:19:10: warning:   'bool Gates::m_isPressed' [-Wreorder]
+   19 |     bool m_isPressed;
+      |          ^~~~~~~~~~~
+Gates.cpp:4:1: warning:   when initialized here [-Wreorder]
+    4 | Gates::Gates(const sf::Vector2f& gateLocation, const std::vector<sf::Vector2f>& plateLocations)
+      | ^~~~~
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Game.o:Game.cpp:(.text+0x30d8): undefined reference to `Character::setPosition(sf::Vector2<float> const&)'
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Game.o:Game.cpp:(.text+0x3117): undefined reference to `Character::setPosition(sf::Vector2<float> const&)'
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Game.o:Game.cpp:(.text+0x3165): undefined reference to `Character::setPosition(sf::Vector2<float> const&)'
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Game.o:Game.cpp:(.text+0x31a1): undefined reference to `Character::setPosition(sf::Vector2<float> const&)'
+collect2.exe: error: ld returned 1 exit status
+make: *** [Makefile:34: game.exe] Error 1

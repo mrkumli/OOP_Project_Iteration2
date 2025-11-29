@@ -15,6 +15,7 @@ Character::Character(const sf::Vector2f& pos)
     m_rect = sf::FloatRect(pos, sf::Vector2f(16.0f, 32.0f));
 }
 
+
 void Character::update(Board& board) {
     if (!m_isAlive) return;
 
