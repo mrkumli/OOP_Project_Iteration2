@@ -21,7 +21,7 @@ enum class GameState {
 class Game {
 private:
     sf::RenderWindow m_window;
-    Board m_board;
+    Board* m_board;
 
     std::list<Character*> m_players;
     std::list<Doors*> m_doors;
@@ -34,11 +34,12 @@ private:
     std::unique_ptr<WASDController> m_wasdController;
 
     GameState m_gameState;
+    int m_currentLevel;
 
-    sf::Font m_font;  // For text rendering
+    sf::Font m_font;
 
 public:
-    Game();
+    Game(int levelNumber = 1);
     ~Game();
 
     void run();
@@ -47,13 +48,14 @@ public:
     void checkCollisions();
     void checkDeath();
     bool checkWin();
+    bool shouldReturnToMenu() const;
 
 private:
     void handleEvents();
     void cleanup();
     void drawBoard();
     void drawGameStateText();
-    void initializeLevel1();
+    void initializeLevel(int levelNumber);
 };
 
 #endif // GAME_H
