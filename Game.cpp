@@ -22,18 +22,26 @@ Game::~Game() {
 }
 
 void Game::initializeLevel1() {
-    // FIX: Adjusted spawn Y to 352.0f (Row 22) to ensure they land on the floor (Row 24)
+    // FIX: Set playerHeight to 32.0f to match Character.cpp
+    float playerHeight = 32.0f;
+
+    // FIX: floorRow is row 24 (index 24 is the floor blocks).
+    // We want to spawn ON TOP of row 24.
+    // Row 24 Y-pos = 24 * 16 = 384.
+    // Spawn Y = 384 - 32 = 352.
+
+    // Hardcoding safe spawn points to guarantee they are above the floor
     m_hotPlayer = new Hot(sf::Vector2f(32.0f, 352.0f));
     m_coldPlayer = new Cold(sf::Vector2f(580.0f, 352.0f));
 
     m_players.push_back(m_hotPlayer);
     m_players.push_back(m_coldPlayer);
 
-    // Create doors at TOP of level
+    // Create doors
     m_doors.push_back(new FireDoor(sf::Vector2f(32.0f, 48.0f)));
     m_doors.push_back(new WaterDoor(sf::Vector2f(576.0f, 48.0f)));
 
-    // Create a gate with pressure plate
+    // Create gates
     std::vector<sf::Vector2f> platePositions = {
         sf::Vector2f(312.0f, 448.0f)
     };
@@ -130,7 +138,6 @@ void Game::drawBoard() {
         sf::Vector2u windowSize = m_window.getSize();
         sf::FloatRect spriteSize = bgSprite.getLocalBounds();
 
-        // SFML 3: Use .size.x / .size.y
         bgSprite.setScale({
             static_cast<float>(windowSize.x) / spriteSize.size.x,
             static_cast<float>(windowSize.y) / spriteSize.size.y
@@ -138,7 +145,6 @@ void Game::drawBoard() {
         m_window.draw(bgSprite);
     }
 
-    // Draw tiles
     const int CHUNK_SIZE = 16;
     for (size_t y = 0; y < gameMap.size(); ++y) {
         for (size_t x = 0; x < gameMap[y].size(); ++x) {
@@ -159,7 +165,6 @@ void Game::drawBoard() {
 }
 
 void Game::drawGameStateText() {
-    // Simple overlay for Win/Loss
     if (m_gameState == GameState::Won || m_gameState == GameState::Lost) {
         sf::RectangleShape overlay({500.0f, 150.0f});
         overlay.setPosition({70.0f, 165.0f});
@@ -200,9 +205,8 @@ void Game::checkCollisions() {
         sf::FloatRect gateRect = gate->getGateRect();
         for (auto* player : m_players) {
             if (!player || player->isDead()) continue;
-            // Simple block check
             if (player->getRect().findIntersection(gateRect)) {
-                // In a full physics engine, we would push back here
+                // collision logic if needed
             }
         }
     }

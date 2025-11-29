@@ -1,8 +1,7 @@
 #include "include/Board.h"
 #include <fstream>
-#include <sstream>
 #include <iostream>
-#include <algorithm>
+#include <algorithm> // for std::remove
 
 Board::Board(const std::string& path) {
     loadMap(path);
@@ -10,49 +9,68 @@ Board::Board(const std::string& path) {
     generateCollidables();
 }
 
-std::string trim(const std::string& str) {
-    size_t first = str.find_first_not_of(" \t\r\n");
-    if (std::string::npos == first) return "";
-    size_t last = str.find_last_not_of(" \t\r\n");
-    return str.substr(first, (last - first + 1));
-}
-
 void Board::loadMap(const std::string& path) {
     std::ifstream file(path);
     if (!file.is_open()) {
-        std::cerr << "Failed to open map file: " << path << std::endl;
+        std::cerr << "CRITICAL FAILED: Could not open map file: " << path << std::endl;
+        // Load a dummy map so the game doesn't crash
+        m_gameMap.resize(30, std::vector<std::string>(40, "0"));
         return;
     }
 
+    std::cout << "Loading map: " << path << std::endl;
     std::string line;
+
     while (std::getline(file, line)) {
+        // Remove carriage returns (Windows CRLF fix)
+        line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+
+        if (line.empty()) continue;
+
         std::vector<std::string> row;
-        std::stringstream ss(line);
-        std::string tile;
+        std::string cell;
 
-        while (std::getline(ss, tile, ',')) {
-            row.push_back(trim(tile));
+        // Manual parsing of comma-separated values
+        for (char c : line) {
+            if (c == ',') {
+                row.push_back(cell);
+                cell.clear();
+            } else {
+                cell += c;
+            }
+        }
+        // Push the last cell
+        row.push_back(cell);
+
+        // 🔧 Normalize row length to exactly 40 columns
+        if (row.size() < 40) {
+            row.resize(40, "0");   // pad with empty tiles
+        } else if (row.size() > 40) {
+            row.resize(40);        // truncate extras
         }
 
-        if (!row.empty()) {
-            m_gameMap.push_back(row);
-        }
+        m_gameMap.push_back(row);
     }
+
     file.close();
-    std::cout << "Loaded map with " << m_gameMap.size() << " rows." << std::endl;
+
+    std::cout << "Map loaded successfully. Rows: " << m_gameMap.size();
+    if (!m_gameMap.empty()) {
+        std::cout << ", Columns in first row: " << m_gameMap[0].size();
+    }
+    std::cout << std::endl;
 }
 
 void Board::loadImages() {
+    // Background texture
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("data/board_textures/wall.png")) {
-        // Fallback for background
-        sf::Image fallback(sf::Vector2u(16, 16), sf::Color(100, 100, 100));
-        if (!backgroundTexture.loadFromImage(fallback)) {
-            std::cerr << "Critical: Failed to load fallback background." << std::endl;
-        }
+    if (backgroundTexture.loadFromFile("data/board_textures/wall.png")) {
+        m_textures["background"] = backgroundTexture;
+    } else {
+        std::cerr << "Warning: background texture not found." << std::endl;
     }
-    m_textures["background"] = backgroundTexture;
 
+    // Tile textures
     std::vector<std::string> textureNames = {
         "100", "111", "112", "113", "114",
         "121", "122", "123", "124",
@@ -62,21 +80,10 @@ void Board::loadImages() {
     for (const auto& name : textureNames) {
         sf::Texture texture;
         std::string path = "data/board_textures/" + name + ".png";
-
         if (texture.loadFromFile(path)) {
             m_textures[name] = texture;
         } else {
-            // SFML 3 FIX: Use Vector2u constructor, then resize if reusing
-            sf::Image fallback(sf::Vector2u(16, 16), sf::Color::Magenta);
-
-            if (name == "2") fallback.resize(sf::Vector2u(16, 16), sf::Color(255, 100, 0)); // Lava
-            else if (name == "3") fallback.resize(sf::Vector2u(16, 16), sf::Color(0, 100, 255)); // Water
-            else if (name == "4") fallback.resize(sf::Vector2u(16, 16), sf::Color(0, 255, 0)); // Goo
-            else fallback.resize(sf::Vector2u(16, 16), sf::Color(80, 80, 80)); // Wall
-
-            if (texture.loadFromImage(fallback)) {
-                m_textures[name] = texture;
-            }
+            std::cerr << "Warning: texture not found for tile " << name << std::endl;
         }
     }
 }
@@ -91,23 +98,24 @@ void Board::generateCollidables() {
         for (size_t x = 0; x < m_gameMap[y].size(); ++x) {
             const std::string& tile = m_gameMap[y][x];
 
-            float xPos = static_cast<float>(x * CHUNK_SIZE);
-            float yPos = static_cast<float>(y * CHUNK_SIZE);
-
-            sf::Vector2f pos(xPos, yPos);
+            sf::Vector2f pos(static_cast<float>(x * CHUNK_SIZE), static_cast<float>(y * CHUNK_SIZE));
             sf::Vector2f fullSize(static_cast<float>(CHUNK_SIZE), static_cast<float>(CHUNK_SIZE));
             sf::Vector2f halfSize(static_cast<float>(CHUNK_SIZE), static_cast<float>(CHUNK_SIZE / 2.0f));
-            sf::Vector2f halfPos(xPos, yPos + CHUNK_SIZE / 2.0f);
+            sf::Vector2f lowerHalfPos(pos.x, pos.y + CHUNK_SIZE / 2.0f);
 
-            if (tile != "0" && tile != "2" && tile != "3" && tile != "4") {
+            // Solid blocks: everything except empty (0) and hazards (2,3,4)
+            if (tile != "0" && tile != "2" && tile != "3" && tile != "4" && !tile.empty()) {
                 m_solidBlocks.emplace_back(pos, fullSize);
             }
 
-            if (tile == "2") m_lavaPools.emplace_back(halfPos, halfSize);
-            if (tile == "3") m_waterPools.emplace_back(halfPos, halfSize);
-            if (tile == "4") m_gooPools.emplace_back(halfPos, halfSize);
+            // Hazards: use lower half of tile
+            if (tile == "2") m_lavaPools.emplace_back(lowerHalfPos, halfSize);
+            if (tile == "3") m_waterPools.emplace_back(lowerHalfPos, halfSize);
+            if (tile == "4") m_gooPools.emplace_back(lowerHalfPos, halfSize);
         }
     }
+
+    std::cout << "Generated " << m_solidBlocks.size() << " solid blocks." << std::endl;
 }
 
 const std::vector<sf::FloatRect>& Board::getSolidBlocks() const { return m_solidBlocks; }
