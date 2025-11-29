@@ -17,25 +17,32 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font, int selectedOption) 
     title.setFillColor(sf::Color::Yellow);
     title.setStyle(sf::Text::Bold);
     sf::FloatRect titleBounds = title.getLocalBounds();
-    title.setPosition(sf::Vector2f((640 - titleBounds.size.x) / 2, 100));
+    title.setPosition(sf::Vector2f((640 - titleBounds.size.x) / 2, 80));
     window.draw(title);
 
-    // Menu options
-    std::vector<std::string> options = {"Start Game", "Level Select", "Quit"};
-    float startY = 250;
-    float spacing = 60;
+    // Subtitle
+    sf::Text subtitle(font, "Select a Level", 24);
+    subtitle.setFillColor(sf::Color(200, 200, 200));
+    sf::FloatRect subtitleBounds = subtitle.getLocalBounds();
+    subtitle.setPosition(sf::Vector2f((640 - subtitleBounds.size.x) / 2, 150));
+    window.draw(subtitle);
+
+    // Menu options - Level 1-5 + Quit
+    std::vector<std::string> options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Quit"};
+    float startY = 200;
+    float spacing = 50;
 
     for (size_t i = 0; i < options.size(); ++i) {
-        sf::Text optionText(font, options[i], 30);
+        sf::Text optionText(font, options[i], 28);
 
         if (static_cast<int>(i) == selectedOption) {
             optionText.setFillColor(sf::Color::White);
             optionText.setStyle(sf::Text::Bold);
 
             // Draw selection indicator
-            sf::Text arrow(font, ">", 30);
+            sf::Text arrow(font, ">", 28);
             arrow.setFillColor(sf::Color::White);
-            arrow.setPosition(sf::Vector2f(150, startY + i * spacing));
+            arrow.setPosition(sf::Vector2f(180, startY + i * spacing));
             window.draw(arrow);
         } else {
             optionText.setFillColor(sf::Color(180, 180, 180));
@@ -50,7 +57,7 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font, int selectedOption) 
     sf::Text instructions(font, "Use UP/DOWN to navigate, ENTER to select", 16);
     instructions.setFillColor(sf::Color(150, 150, 150));
     sf::FloatRect instrBounds = instructions.getLocalBounds();
-    instructions.setPosition(sf::Vector2f((640 - instrBounds.size.x) / 2, 430));
+    instructions.setPosition(sf::Vector2f((640 - instrBounds.size.x) / 2, 450));
     window.draw(instructions);
 
     window.display();
@@ -86,25 +93,19 @@ int main() {
                     if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                         switch (keyPressed->code) {
                             case sf::Keyboard::Key::Up:
-                                selectedOption = (selectedOption - 1 + 3) % 3;
+                                selectedOption = (selectedOption - 1 + 6) % 6;
                                 break;
                             case sf::Keyboard::Key::Down:
-                                selectedOption = (selectedOption + 1) % 3;
+                                selectedOption = (selectedOption + 1) % 6;
                                 break;
                             case sf::Keyboard::Key::Enter:
-                                if (selectedOption == 0) {
-                                    // Start Game (Level 1)
-                                    std::cout << "\nStarting Level 1..." << std::endl;
+                                if (selectedOption >= 0 && selectedOption <= 4) {
+                                    // Level 1-5 selected
+                                    std::cout << "\nStarting Level " << (selectedOption + 1) << "..." << std::endl;
                                     menuState = MenuState::InGame;
                                     if (game) delete game;
                                     game = new Game();
-                                } else if (selectedOption == 1) {
-                                    // Level Select (not implemented yet)
-                                    std::cout << "\nLevel Select not yet implemented. Starting Level 1..." << std::endl;
-                                    menuState = MenuState::InGame;
-                                    if (game) delete game;
-                                    game = new Game();
-                                } else if (selectedOption == 2) {
+                                } else if (selectedOption == 5) {
                                     // Quit
                                     window.close();
                                 }

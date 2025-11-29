@@ -383,23 +383,37 @@ bool Game::checkWin() {
     if (!m_coldPlayer || m_coldPlayer->isDead()) return false;
 
     for (auto* door : m_doors) {
+        // CRITICAL: Door must be fully open (not just opening)
         if (!door->isOpen()) continue;
 
         sf::FloatRect doorRect = door->getRect();
 
+        // Make the win zone slightly smaller to require player to be inside door
+        sf::FloatRect winZone = doorRect;
+        winZone.position.x += 4.0f;
+        winZone.position.y += 4.0f;
+        winZone.size.x -= 8.0f;
+        winZone.size.y -= 8.0f;
+
         // Check hot player at fire door
-        if (m_hotPlayer->getRect().findIntersection(doorRect)) {
+        if (m_hotPlayer->getRect().findIntersection(winZone)) {
             if (dynamic_cast<FireDoor*>(door) != nullptr) {
                 hotAtFireDoor = true;
+                std::cout << "Hot player at fire door!" << std::endl;
             }
         }
 
         // Check cold player at water door
-        if (m_coldPlayer->getRect().findIntersection(doorRect)) {
+        if (m_coldPlayer->getRect().findIntersection(winZone)) {
             if (dynamic_cast<WaterDoor*>(door) != nullptr) {
                 coldAtWaterDoor = true;
+                std::cout << "Cold player at water door!" << std::endl;
             }
         }
+    }
+
+    if (hotAtFireDoor && coldAtWaterDoor) {
+        std::cout << "WIN CONDITION MET: Both players at their doors!" << std::endl;
     }
 
     return hotAtFireDoor && coldAtWaterDoor;

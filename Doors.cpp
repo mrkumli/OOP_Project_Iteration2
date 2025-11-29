@@ -2,16 +2,13 @@
 #include <iostream>
 
 Doors::Doors(const sf::Vector2f& doorLocation)
-    : m_isOpen(false),           // Correct order
+    : m_isOpen(false),
       m_heightRaised(0.0f),
       m_playerAtDoor(false),
       m_doorLocation(doorLocation)
 {
     loadCommonImages();
 }
-// ... (Keep the rest of the file exactly as it was) ...
-// (Since I cannot see the rest of your file, just copy the Constructor part above)
-// I will provide the FULL file below to be safe:
 
 void Doors::loadCommonImages() {
     if (!m_frameTexture.loadFromFile("data/door_images/door_frame.png")) {}
@@ -31,13 +28,19 @@ void Doors::tryRaiseDoor() {
     if (m_playerAtDoor && !m_isOpen) {
         m_doorLocation.y -= DOOR_SPEED;
         m_heightRaised += DOOR_SPEED;
-        if (m_heightRaised >= 31.0f) m_isOpen = true;
+        if (m_heightRaised >= 31.0f) {
+            m_isOpen = true;
+            std::cout << "Door is now fully OPEN!" << std::endl;
+        }
         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
     else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
         m_doorLocation.y += DOOR_SPEED;
         m_heightRaised -= DOOR_SPEED;
-        m_isOpen = false;
+        if (m_heightRaised <= 0.0f) {
+            m_isOpen = false;
+            std::cout << "Door is now CLOSED" << std::endl;
+        }
         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
 }
@@ -56,13 +59,28 @@ FireDoor::FireDoor(const sf::Vector2f& doorLocation) : Doors(doorLocation) {
     m_doorSprite.emplace(m_doorTexture);
     m_doorSprite->setPosition(m_doorLocation);
     m_rect = sf::FloatRect(m_doorLocation, sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x), static_cast<float>(m_doorTexture.getSize().y)));
+
+    std::cout << "FireDoor created at position: " << doorLocation.x << ", " << doorLocation.y << std::endl;
 }
 
 void FireDoor::tryOpen(Character& player) {
-    if (player.getRect().findIntersection(m_rect)) {
-        if (player.getType() == "hot") m_playerAtDoor = true;
-        else m_playerAtDoor = false;
-    } else m_playerAtDoor = false;
+    // Create a detection zone around the door
+    sf::FloatRect detectionZone = m_rect;
+    detectionZone.position.x -= 10.0f;
+    detectionZone.position.y -= 10.0f;
+    detectionZone.size.x += 20.0f;
+    detectionZone.size.y += 20.0f;
+
+    if (player.getRect().findIntersection(detectionZone)) {
+        if (player.getType() == "hot") {
+            m_playerAtDoor = true;
+            std::cout << "Hot player near fire door - opening..." << std::endl;
+        } else {
+            m_playerAtDoor = false;
+        }
+    } else {
+        m_playerAtDoor = false;
+    }
     tryRaiseDoor();
 }
 
@@ -71,12 +89,27 @@ WaterDoor::WaterDoor(const sf::Vector2f& doorLocation) : Doors(doorLocation) {
     m_doorSprite.emplace(m_doorTexture);
     m_doorSprite->setPosition(m_doorLocation);
     m_rect = sf::FloatRect(m_doorLocation, sf::Vector2f(static_cast<float>(m_doorTexture.getSize().x), static_cast<float>(m_doorTexture.getSize().y)));
+
+    std::cout << "WaterDoor created at position: " << doorLocation.x << ", " << doorLocation.y << std::endl;
 }
 
 void WaterDoor::tryOpen(Character& player) {
-    if (player.getRect().findIntersection(m_rect)) {
-        if (player.getType() == "cold") m_playerAtDoor = true;
-        else m_playerAtDoor = false;
-    } else m_playerAtDoor = false;
+    // Create a detection zone around the door
+    sf::FloatRect detectionZone = m_rect;
+    detectionZone.position.x -= 10.0f;
+    detectionZone.position.y -= 10.0f;
+    detectionZone.size.x += 20.0f;
+    detectionZone.size.y += 20.0f;
+
+    if (player.getRect().findIntersection(detectionZone)) {
+        if (player.getType() == "cold") {
+            m_playerAtDoor = true;
+            std::cout << "Cold player near water door - opening..." << std::endl;
+        } else {
+            m_playerAtDoor = false;
+        }
+    } else {
+        m_playerAtDoor = false;
+    }
     tryRaiseDoor();
 }
