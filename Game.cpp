@@ -32,6 +32,8 @@ void Game::initializeLevel(int levelNumber) {
 
     // Load the appropriate level file
     std::string levelFile = "data/level" + std::to_string(levelNumber) + ".txt";
+    std::cout << "[LEVEL LOAD] Loading: " << levelFile << std::endl;
+
     if (m_board) delete m_board;
     m_board = new Board(levelFile);
 
@@ -64,7 +66,7 @@ void Game::initializeLevel(int levelNumber) {
     std::cout << "\nCONTROLS:" << std::endl;
     std::cout << "  Hot Player:  ← → ↑ (Arrow Keys)" << std::endl;
     std::cout << "  Cold Player: A D W (WASD)" << std::endl;
-    std::cout << "  ESC: Quit | R: Restart" << std::endl;
+    std::cout << "  ESC: Quit | R: Restart | M: Menu" << std::endl;
     std::cout << "\nMECHANICS:" << std::endl;
     std::cout << "  • Hot dies in WATER (blue)" << std::endl;
     std::cout << "  • Cold dies in LAVA (red/orange)" << std::endl;
@@ -369,28 +371,56 @@ bool Game::checkWin() {
     bool hotAtFireDoor = false;
     bool coldAtWaterDoor = false;
 
-    if (!m_hotPlayer || m_hotPlayer->isDead()) return false;
-    if (!m_coldPlayer || m_coldPlayer->isDead()) return false;
+    if (!m_hotPlayer || m_hotPlayer->isDead()) {
+        std::cout << "[WIN CHECK] Hot player is dead or null" << std::endl;
+        return false;
+    }
+    if (!m_coldPlayer || m_coldPlayer->isDead()) {
+        std::cout << "[WIN CHECK] Cold player is dead or null" << std::endl;
+        return false;
+    }
+
+    std::cout << "[WIN CHECK] Both players alive, checking doors..." << std::endl;
 
     for (auto* door : m_doors) {
-        if (!door->isOpen()) continue;
+        bool doorOpen = door->isOpen();
+        std::cout << "[WIN CHECK] Door open status: " << (doorOpen ? "OPEN" : "CLOSED") << std::endl;
+
+        if (!doorOpen) continue;
 
         sf::FloatRect doorRect = door->getRect();
+        std::cout << "[WIN CHECK] Door rect: (" << doorRect.position.x << ", " << doorRect.position.y
+                  << ") size: (" << doorRect.size.x << ", " << doorRect.size.y << ")" << std::endl;
+
+        sf::FloatRect hotRect = m_hotPlayer->getRect();
+        sf::FloatRect coldRect = m_coldPlayer->getRect();
+
+        std::cout << "[WIN CHECK] Hot player rect: (" << hotRect.position.x << ", " << hotRect.position.y << ")" << std::endl;
+        std::cout << "[WIN CHECK] Cold player rect: (" << coldRect.position.x << ", " << coldRect.position.y << ")" << std::endl;
 
         if (m_hotPlayer->getRect().findIntersection(doorRect)) {
             if (dynamic_cast<FireDoor*>(door) != nullptr) {
                 hotAtFireDoor = true;
+                std::cout << "[WIN CHECK] ✓ Hot player AT FIRE DOOR!" << std::endl;
             }
         }
 
         if (m_coldPlayer->getRect().findIntersection(doorRect)) {
             if (dynamic_cast<WaterDoor*>(door) != nullptr) {
                 coldAtWaterDoor = true;
+                std::cout << "[WIN CHECK] ✓ Cold player AT WATER DOOR!" << std::endl;
             }
         }
     }
 
-    return hotAtFireDoor && coldAtWaterDoor;
+    if (hotAtFireDoor && coldAtWaterDoor) {
+        std::cout << "[WIN CHECK] ★★★ WIN CONDITION MET! ★★★" << std::endl;
+        return true;
+    }
+
+    std::cout << "[WIN CHECK] Not winning yet. Hot at door: " << hotAtFireDoor
+              << ", Cold at door: " << coldAtWaterDoor << std::endl;
+    return false;
 }
 
 bool Game::shouldReturnToMenu() const {

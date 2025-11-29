@@ -30,7 +30,7 @@ void Doors::tryRaiseDoor() {
         m_heightRaised += DOOR_SPEED;
         if (m_heightRaised >= 31.0f) {
             m_isOpen = true;
-            std::cout << "Door is now fully OPEN!" << std::endl;
+            std::cout << "[DOOR] Door is now fully OPEN! Height: " << m_heightRaised << std::endl;
         }
         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
@@ -39,7 +39,7 @@ void Doors::tryRaiseDoor() {
         m_heightRaised -= DOOR_SPEED;
         if (m_heightRaised <= 0.0f) {
             m_isOpen = false;
-            std::cout << "Door is now CLOSED" << std::endl;
+            std::cout << "[DOOR] Door is now CLOSED. Height: " << m_heightRaised << std::endl;
         }
         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
@@ -74,7 +74,12 @@ void FireDoor::tryOpen(Character& player) {
     if (player.getRect().findIntersection(detectionZone)) {
         if (player.getType() == "hot") {
             m_playerAtDoor = true;
-            std::cout << "Hot player near fire door - opening..." << std::endl;
+            // Only log occasionally to avoid spam
+            static int logCounter = 0;
+            if (logCounter % 60 == 0) {
+                std::cout << "[FIRE DOOR] Hot player near fire door - opening... Height: " << m_heightRaised << std::endl;
+            }
+            logCounter++;
         } else {
             m_playerAtDoor = false;
         }
@@ -104,7 +109,12 @@ void WaterDoor::tryOpen(Character& player) {
     if (player.getRect().findIntersection(detectionZone)) {
         if (player.getType() == "cold") {
             m_playerAtDoor = true;
-            std::cout << "Cold player near water door - opening..." << std::endl;
+            // Only log occasionally to avoid spam
+            static int logCounter = 0;
+            if (logCounter % 60 == 0) {
+                std::cout << "[WATER DOOR] Cold player near water door - opening... Height: " << m_heightRaised << std::endl;
+            }
+            logCounter++;
         } else {
             m_playerAtDoor = false;
         }
