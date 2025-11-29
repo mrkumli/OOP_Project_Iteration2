@@ -1,15 +1,49 @@
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x0): multiple definition of `Doors::Doors(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x0): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x0): multiple definition of `Doors::Doors(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x0): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x18c): multiple definition of `Doors::loadCommonImages()'; Doors.o:Doors.cpp:(.text+0x18c): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x406): multiple definition of `Doors::tryRaiseDoor()'; Doors.o:Doors.cpp:(.text+0x406): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x662): multiple definition of `Doors::draw(sf::RenderWindow&)'; Doors.o:Doors.cpp:(.text+0x5b6): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x754): multiple definition of `Doors::isOpen() const'; Doors.o:Doors.cpp:(.text+0x6a8): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x76a): multiple definition of `Doors::getRect() const'; Doors.o:Doors.cpp:(.text+0x6be): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x794): multiple definition of `FireDoor::FireDoor(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x6e8): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x794): multiple definition of `FireDoor::FireDoor(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x6e8): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0x9c8): multiple definition of `FireDoor::tryOpen(Character&)'; Doors.o:Doors.cpp:(.text+0x91c): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0xab8): multiple definition of `WaterDoor::WaterDoor(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x9f4): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0xab8): multiple definition of `WaterDoor::WaterDoor(sf::Vector2<float> const&)'; Doors.o:Doors.cpp:(.text+0x9f4): first defined here
-C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: Gates.o:Gates.cpp:(.text+0xcec): multiple definition of `WaterDoor::tryOpen(Character&)'; Doors.o:Doors.cpp:(.text+0xc28): first defined here
-collect2.exe: error: ld returned 1 exit status
-make: *** [Makefile:30: game.exe] Error 1
+Game.cpp: In member function 'void Game::handleEvents()':
+Game.cpp:98:49: error: no matching function for call to 'sf::RenderWindow::pollEvent()'
+   98 |     while (const auto event = m_window.pollEvent()) {
+      |                               ~~~~~~~~~~~~~~~~~~^~
+Game.cpp:98:49: note: there is 1 candidate
+In file included from C:/msys64/ucrt64/include/SFML/Window/Window.hpp:33,
+                 from C:/msys64/ucrt64/include/SFML/Window.hpp:44,
+                 from C:/msys64/ucrt64/include/SFML/Graphics.hpp:32,
+                 from include/Game.h:4,
+                 from Game.cpp:1:
+C:/msys64/ucrt64/include/SFML/Window/WindowBase.hpp:170:10: note: candidate 1: 'bool sf::WindowBase::pollEvent(sf::Event&)'
+  170 |     bool pollEvent(Event& event);
+      |          ^~~~~~~~~
+C:/msys64/ucrt64/include/SFML/Window/WindowBase.hpp:170:10: note: candidate expects 1 argument, 0 provided
+Game.cpp:99:42: error: expected primary-expression before ')' token
+   99 |         if (event->is<sf::Event::Closed>()) {
+      |                                          ^
+Game.cpp:103:74: error: expected primary-expression before ')' token
+  103 |         if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+      |                                                                          ^
+Game.cpp: In member function 'void Game::drawBoard()':
+Game.cpp:229:59: error: 'sf::FloatRect' {aka 'class sf::Rect<float>'} has no member named 'size'
+  229 |             static_cast<float>(windowSize.x) / spriteSize.size.x,
+      |                                                           ^~~~
+Game.cpp:230:59: error: 'sf::FloatRect' {aka 'class sf::Rect<float>'} has no member named 'size'
+  230 |             static_cast<float>(windowSize.y) / spriteSize.size.y
+      |                                                           ^~~~
+Game.cpp: In member function 'void Game::checkDeath()':
+Game.cpp:314:32: error: 'sf::FloatRect' {aka 'class sf::Rect<float>'} has no member named 'findIntersection'
+  314 |                 if (playerRect.findIntersection(lavaPool)) {
+      |                                ^~~~~~~~~~~~~~~~
+Game.cpp:325:32: error: 'sf::FloatRect' {aka 'class sf::Rect<float>'} has no member named 'findIntersection'
+  325 |                 if (playerRect.findIntersection(waterPool)) {
+      |                                ^~~~~~~~~~~~~~~~
+Game.cpp:336:32: error: 'sf::FloatRect' {aka 'class sf::Rect<float>'} has no member named 'findIntersection'
+  336 |                 if (playerRect.findIntersection(gooPool)) {
+      |                                ^~~~~~~~~~~~~~~~
+Game.cpp: In member function 'void Game::checkCollisions()':
+Game.cpp:358:28: error: 'sf::FloatRect' {aka 'class sf::Rect<float>'} has no member named 'findIntersection'
+  358 |             if (playerRect.findIntersection(gateRect)) {
+      |                            ^~~~~~~~~~~~~~~~
+Game.cpp: In member function 'bool Game::checkWin()':
+Game.cpp:377:40: error: 'sf::FloatRect' {aka 'class sf::Rect<float>'} has no member named 'findIntersection'
+  377 |             if (m_hotPlayer->getRect().findIntersection(doorRect)) {
+      |                                        ^~~~~~~~~~~~~~~~
+Game.cpp:387:41: error: 'sf::FloatRect' {aka 'class sf::Rect<float>'} has no member named 'findIntersection'
+  387 |             if (m_coldPlayer->getRect().findIntersection(doorRect)) {
+      |                                         ^~~~~~~~~~~~~~~~
+make: *** [Makefile:28: Game.o] Error 1

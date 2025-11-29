@@ -31,6 +31,7 @@ public:
 
     sf::FloatRect getGateRect() const;
     const std::vector<sf::FloatRect>& getPlateRects() const;
+    bool isOpen() const;
 
 private:
     void loadImages();

@@ -1,58 +1,40 @@
-# Compiler and output settings
-SFML_PATH = C:/libraries/SFML-3.0.2
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra
-OUTPUT = game.exe
+# ----------------------------------------------------
+# SFML 3 MAKEFILE
+# ----------------------------------------------------
 
-# Include and library paths
-INCLUDES = -I"$(SFML_PATH)/include"
-LIB_PATH = -L"$(SFML_PATH)/lib"
-LIBS = -lsfml-graphics -lsfml-window -lsfml-system
+# CHANGE THIS PATH to where you extracted SFML 3
+# Example: C:/Users/YourName/Downloads/SFML-3.0.0
+SFML_DIR = C:/libraries/SFML-3.0.2
+
+# Compiler settings
+CXX = g++
+# We use -I to point to SFML 3 include BEFORE system includes
+CXXFLAGS = -std=c++17 -Wall -Iinclude -I$(SFML_DIR)/include
+
+# Library paths
+# We use -L to point to SFML 3 libs
+LDFLAGS = -L$(SFML_DIR)/lib
+
+# SFML 3 Libraries
+LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 # Source files
-SOURCES = Board.cpp \
-          Character.cpp \
-          Controller.cpp \
-          Doors.cpp \
-          Gates.cpp \
-          LevelSelect.cpp \
-          Game.cpp \
-          main.cpp
+SRCS = main.cpp Game.cpp Board.cpp Character.cpp Controller.cpp Doors.cpp Gates.cpp LevelSelect.cpp
 
-# Object files (derived from sources)
-OBJECTS = $(SOURCES:.cpp=.o)
+# Object files
+OBJS = $(SRCS:.cpp=.o)
+
+# Executable name
+TARGET = game.exe
 
 # Default target
-all: $(OUTPUT)
+all: $(TARGET)
 
-# Link object files to create executable
-$(OUTPUT): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $(OUTPUT) $(LIB_PATH) $(LIBS)
-	@echo "Build complete! Run with: make run"
+$(TARGET): $(OBJS)
+	$(CXX) $(OBJS) -o $(TARGET) $(LDFLAGS) $(LIBS)
 
-# Compile source files to object files
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Run the game
-run: $(OUTPUT)
-	./$(OUTPUT)
-
-# Clean build artifacts
 clean:
-	rm -f $(OBJECTS) $(OUTPUT)
-	@echo "Clean complete!"
-
-# Rebuild everything
-rebuild: clean all
-
-# Help target
-help:
-	@echo "Available targets:"
-	@echo "  make        - Build the game"
-	@echo "  make run    - Build and run the game"
-	@echo "  make clean  - Remove build artifacts"
-	@echo "  make rebuild - Clean and rebuild"
-	@echo "  make help   - Show this help message"
-
-.PHONY: all run clean rebuild help
+	del *.o $(TARGET)

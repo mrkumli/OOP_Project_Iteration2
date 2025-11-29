@@ -2,11 +2,19 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 Board::Board(const std::string& path) {
     loadMap(path);
     loadImages();
     generateCollidables();
+}
+
+std::string trim(const std::string& str) {
+    size_t first = str.find_first_not_of(" \t\r\n");
+    if (std::string::npos == first) return "";
+    size_t last = str.find_last_not_of(" \t\r\n");
+    return str.substr(first, (last - first + 1));
 }
 
 void Board::loadMap(const std::string& path) {
@@ -23,20 +31,25 @@ void Board::loadMap(const std::string& path) {
         std::string tile;
 
         while (std::getline(ss, tile, ',')) {
-            row.push_back(tile);
+            row.push_back(trim(tile));
         }
 
-        m_gameMap.push_back(row);
+        if (!row.empty()) {
+            m_gameMap.push_back(row);
+        }
     }
-
     file.close();
-    std::cout << "Loaded map with " << m_gameMap.size() << " rows" << std::endl;
+    std::cout << "Loaded map with " << m_gameMap.size() << " rows." << std::endl;
 }
 
 void Board::loadImages() {
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("data/board_textures/wall.png")) {
-        std::cerr << "Failed to load background texture" << std::endl;
+        // Fallback for background
+        sf::Image fallback(sf::Vector2u(16, 16), sf::Color(100, 100, 100));
+        if (!backgroundTexture.loadFromImage(fallback)) {
+            std::cerr << "Critical: Failed to load fallback background." << std::endl;
+        }
     }
     m_textures["background"] = backgroundTexture;
 
@@ -49,13 +62,23 @@ void Board::loadImages() {
     for (const auto& name : textureNames) {
         sf::Texture texture;
         std::string path = "data/board_textures/" + name + ".png";
-        if (!texture.loadFromFile(path)) {
-            std::cerr << "Texture Load Failed on: " << path << std::endl;
-        }
-        m_textures[name] = texture;
-    }
 
-    std::cout << "Loaded " << m_textures.size() << " textures" << std::endl;
+        if (texture.loadFromFile(path)) {
+            m_textures[name] = texture;
+        } else {
+            // SFML 3 FIX: Use Vector2u constructor, then resize if reusing
+            sf::Image fallback(sf::Vector2u(16, 16), sf::Color::Magenta);
+
+            if (name == "2") fallback.resize(sf::Vector2u(16, 16), sf::Color(255, 100, 0)); // Lava
+            else if (name == "3") fallback.resize(sf::Vector2u(16, 16), sf::Color(0, 100, 255)); // Water
+            else if (name == "4") fallback.resize(sf::Vector2u(16, 16), sf::Color(0, 255, 0)); // Goo
+            else fallback.resize(sf::Vector2u(16, 16), sf::Color(80, 80, 80)); // Wall
+
+            if (texture.loadFromImage(fallback)) {
+                m_textures[name] = texture;
+            }
+        }
+    }
 }
 
 void Board::generateCollidables() {
@@ -71,63 +94,25 @@ void Board::generateCollidables() {
             float xPos = static_cast<float>(x * CHUNK_SIZE);
             float yPos = static_cast<float>(y * CHUNK_SIZE);
 
+            sf::Vector2f pos(xPos, yPos);
+            sf::Vector2f fullSize(static_cast<float>(CHUNK_SIZE), static_cast<float>(CHUNK_SIZE));
+            sf::Vector2f halfSize(static_cast<float>(CHUNK_SIZE), static_cast<float>(CHUNK_SIZE / 2.0f));
+            sf::Vector2f halfPos(xPos, yPos + CHUNK_SIZE / 2.0f);
+
             if (tile != "0" && tile != "2" && tile != "3" && tile != "4") {
-                m_solidBlocks.emplace_back(
-                    sf::Vector2f(xPos, yPos),
-                    sf::Vector2f(static_cast<float>(CHUNK_SIZE), static_cast<float>(CHUNK_SIZE))
-                );
+                m_solidBlocks.emplace_back(pos, fullSize);
             }
 
-            if (tile == "2") {
-                m_lavaPools.emplace_back(
-                    sf::Vector2f(xPos, yPos + CHUNK_SIZE / 2.0f),
-                    sf::Vector2f(static_cast<float>(CHUNK_SIZE), static_cast<float>(CHUNK_SIZE / 2.0f))
-                );
-            }
-
-            if (tile == "3") {
-                m_waterPools.emplace_back(
-                    sf::Vector2f(xPos, yPos + CHUNK_SIZE / 2.0f),
-                    sf::Vector2f(static_cast<float>(CHUNK_SIZE), static_cast<float>(CHUNK_SIZE / 2.0f))
-                );
-            }
-
-            if (tile == "4") {
-                m_gooPools.emplace_back(
-                    sf::Vector2f(xPos, yPos + CHUNK_SIZE / 2.0f),
-                    sf::Vector2f(static_cast<float>(CHUNK_SIZE), static_cast<float>(CHUNK_SIZE / 2.0f))
-                );
-            }
+            if (tile == "2") m_lavaPools.emplace_back(halfPos, halfSize);
+            if (tile == "3") m_waterPools.emplace_back(halfPos, halfSize);
+            if (tile == "4") m_gooPools.emplace_back(halfPos, halfSize);
         }
     }
-
-    std::cout << "Generated collidables:" << std::endl;
-    std::cout << "  Solid blocks: " << m_solidBlocks.size() << std::endl;
-    std::cout << "  Lava pools: " << m_lavaPools.size() << std::endl;
-    std::cout << "  Water pools: " << m_waterPools.size() << std::endl;
-    std::cout << "  Goo pools: " << m_gooPools.size() << std::endl;
 }
 
-const std::vector<sf::FloatRect>& Board::getSolidBlocks() const {
-    return m_solidBlocks;
-}
-
-const std::vector<sf::FloatRect>& Board::getLavaPools() const {
-    return m_lavaPools;
-}
-
-const std::vector<sf::FloatRect>& Board::getWaterPools() const {
-    return m_waterPools;
-}
-
-const std::vector<sf::FloatRect>& Board::getGooPools() const {
-    return m_gooPools;
-}
-
-const std::map<std::string, sf::Texture>& Board::getTextures() const {
-    return m_textures;
-}
-
-const std::vector<std::vector<std::string>>& Board::getGameMap() const {
-    return m_gameMap;
-}
+const std::vector<sf::FloatRect>& Board::getSolidBlocks() const { return m_solidBlocks; }
+const std::vector<sf::FloatRect>& Board::getLavaPools() const { return m_lavaPools; }
+const std::vector<sf::FloatRect>& Board::getWaterPools() const { return m_waterPools; }
+const std::vector<sf::FloatRect>& Board::getGooPools() const { return m_gooPools; }
+const std::map<std::string, sf::Texture>& Board::getTextures() const { return m_textures; }
+const std::vector<std::vector<std::string>>& Board::getGameMap() const { return m_gameMap; }
