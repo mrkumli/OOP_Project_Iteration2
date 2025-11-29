@@ -9,17 +9,18 @@
 
 class Gates {
 private:
+    // Member variables in order of initialization
+    sf::Vector2f m_gateLocation;
+    std::vector<sf::Vector2f> m_plateLocations;
+    bool m_isPressed;
+    bool m_isOpen;
+
     sf::FloatRect m_gateRect;
     std::vector<sf::FloatRect> m_plateRects;
     std::optional<sf::Sprite> m_gateSprite;
     std::vector<sf::Sprite> m_plateSprites;
     sf::Texture m_gateTexture;
     sf::Texture m_plateTexture;
-
-    bool m_isPressed;
-    bool m_isOpen;
-    sf::Vector2f m_gateLocation;
-    std::vector<sf::Vector2f> m_plateLocations;
 
     static constexpr int CHUNK_SIZE = 16;
 

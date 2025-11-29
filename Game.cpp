@@ -11,6 +11,11 @@ Game::Game()
 {
     m_window.setFramerateLimit(60);
 
+    // Try to load font - use a system font as fallback
+    if (!m_font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+        std::cerr << "Warning: Could not load font" << std::endl;
+    }
+
     m_arrowsController = std::make_unique<ArrowsController>();
     m_wasdController = std::make_unique<WASDController>();
 
@@ -22,30 +27,28 @@ Game::~Game() {
 }
 
 void Game::initializeLevel1() {
-    // Clear existing objects
     cleanup();
 
-    // Spawn players on opposite sides of the level
-    m_hotPlayer = new Hot(sf::Vector2f(48.0f, 400.0f));     // Left side
-    m_coldPlayer = new Cold(sf::Vector2f(560.0f, 400.0f));  // Right side
+    m_hotPlayer = new Hot(sf::Vector2f(48.0f, 400.0f));
+    m_coldPlayer = new Cold(sf::Vector2f(560.0f, 400.0f));
 
     m_players.push_back(m_hotPlayer);
     m_players.push_back(m_coldPlayer);
 
-    // Doors at top - players must reach these to win
-    m_doors.push_back(new FireDoor(sf::Vector2f(48.0f, 32.0f)));   // Top left for hot
-    m_doors.push_back(new WaterDoor(sf::Vector2f(560.0f, 32.0f))); // Top right for cold
+    m_doors.push_back(new FireDoor(sf::Vector2f(48.0f, 32.0f)));
+    m_doors.push_back(new WaterDoor(sf::Vector2f(560.0f, 32.0f)));
 
-    // TWO gates with TWO pressure plates
-    // Gate 1: Middle-left area, controlled by plate on left
+    // Two pressure plates for the left gate
     std::vector<sf::Vector2f> leftPlates = {
-        sf::Vector2f(80.0f, 368.0f)  // Left side pressure plate
+        sf::Vector2f(80.0f, 368.0f),
+        sf::Vector2f(112.0f, 368.0f)
     };
     m_gates.push_back(new Gates(sf::Vector2f(200.0f, 192.0f), leftPlates));
 
-    // Gate 2: Middle-right area, controlled by plate on right
+    // Two pressure plates for the right gate
     std::vector<sf::Vector2f> rightPlates = {
-        sf::Vector2f(520.0f, 368.0f)  // Right side pressure plate
+        sf::Vector2f(488.0f, 368.0f),
+        sf::Vector2f(520.0f, 368.0f)
     };
     m_gates.push_back(new Gates(sf::Vector2f(400.0f, 192.0f), rightPlates));
 
@@ -117,8 +120,7 @@ void Game::update() {
         }
     }
 
-    // CRITICAL: Check gate collisions BEFORE updating gates
-    // This prevents players from passing through closing gates
+    // Check gate collisions AFTER player movement
     checkCollisions();
 
     checkDeath();
@@ -132,7 +134,7 @@ void Game::update() {
         }
     }
 
-    // Update gates (they open/close based on plates)
+    // Update gates
     for (auto* gate : m_gates) {
         gate->tryOpen(m_players);
     }
@@ -168,24 +170,20 @@ void Game::draw() {
 
     drawBoard();
 
-    // Draw gates (they need to block view when closed)
     for (auto* gate : m_gates) {
         gate->draw(m_window);
     }
 
-    // Draw doors
     for (auto* door : m_doors) {
         door->draw(m_window);
     }
 
-    // Draw players on top
     for (auto* player : m_players) {
         if (player) {
             player->draw(m_window);
         }
     }
 
-    // Draw game state overlay
     drawGameStateText();
 
     m_window.display();
@@ -195,7 +193,6 @@ void Game::drawBoard() {
     const auto& textures = m_board.getTextures();
     const auto& gameMap = m_board.getGameMap();
 
-    // Draw background
     auto bgIt = textures.find("background");
     if (bgIt != textures.end()) {
         sf::Sprite bgSprite(bgIt->second);
@@ -213,7 +210,6 @@ void Game::drawBoard() {
         m_window.draw(bg);
     }
 
-    // Draw tiles with fallback colors
     const int CHUNK_SIZE = 16;
     for (size_t y = 0; y < gameMap.size(); ++y) {
         for (size_t x = 0; x < gameMap[y].size(); ++x) {
@@ -229,7 +225,6 @@ void Game::drawBoard() {
                     ));
                     m_window.draw(tileSprite);
                 } else {
-                    // Fallback colored tiles
                     sf::RectangleShape fallback(sf::Vector2f(CHUNK_SIZE, CHUNK_SIZE));
                     fallback.setPosition(sf::Vector2f(
                         static_cast<float>(x * CHUNK_SIZE),
@@ -237,13 +232,13 @@ void Game::drawBoard() {
                     ));
 
                     if (tile == "2") {
-                        fallback.setFillColor(sf::Color(255, 80, 0)); // Lava
+                        fallback.setFillColor(sf::Color(255, 80, 0));
                     } else if (tile == "3") {
-                        fallback.setFillColor(sf::Color(0, 120, 255)); // Water
+                        fallback.setFillColor(sf::Color(0, 120, 255));
                     } else if (tile == "4") {
-                        fallback.setFillColor(sf::Color(50, 255, 50)); // Goo
+                        fallback.setFillColor(sf::Color(50, 255, 50));
                     } else {
-                        fallback.setFillColor(sf::Color(70, 70, 70)); // Walls
+                        fallback.setFillColor(sf::Color(70, 70, 70));
                     }
 
                     m_window.draw(fallback);
@@ -255,7 +250,7 @@ void Game::drawBoard() {
 
 void Game::drawGameStateText() {
     if (m_gameState == GameState::Won) {
-        // Victory screen
+        // Victory overlay
         sf::RectangleShape overlay(sf::Vector2f(500, 200));
         overlay.setPosition(sf::Vector2f(70, 140));
         overlay.setFillColor(sf::Color(0, 150, 0, 240));
@@ -263,14 +258,19 @@ void Game::drawGameStateText() {
         overlay.setOutlineThickness(5.0f);
         m_window.draw(overlay);
 
-        // Inner text box
-        sf::RectangleShape textBox(sf::Vector2f(480, 80));
-        textBox.setPosition(sf::Vector2f(80, 210));
-        textBox.setFillColor(sf::Color(0, 100, 0, 200));
-        m_window.draw(textBox);
+        // Victory text
+        sf::Text titleText(m_font, "LEVEL COMPLETE!", 36);
+        titleText.setFillColor(sf::Color::White);
+        titleText.setPosition(sf::Vector2f(150, 170));
+        m_window.draw(titleText);
+
+        sf::Text instructionsText(m_font, "Press R to Restart\nPress ESC to Quit", 20);
+        instructionsText.setFillColor(sf::Color::White);
+        instructionsText.setPosition(sf::Vector2f(220, 240));
+        m_window.draw(instructionsText);
 
     } else if (m_gameState == GameState::Lost) {
-        // Game over screen
+        // Game over overlay
         sf::RectangleShape overlay(sf::Vector2f(500, 200));
         overlay.setPosition(sf::Vector2f(70, 140));
         overlay.setFillColor(sf::Color(150, 0, 0, 240));
@@ -278,11 +278,16 @@ void Game::drawGameStateText() {
         overlay.setOutlineThickness(5.0f);
         m_window.draw(overlay);
 
-        // Inner text box
-        sf::RectangleShape textBox(sf::Vector2f(480, 80));
-        textBox.setPosition(sf::Vector2f(80, 210));
-        textBox.setFillColor(sf::Color(100, 0, 0, 200));
-        m_window.draw(textBox);
+        // Game over text
+        sf::Text titleText(m_font, "GAME OVER", 36);
+        titleText.setFillColor(sf::Color::White);
+        titleText.setPosition(sf::Vector2f(210, 170));
+        m_window.draw(titleText);
+
+        sf::Text instructionsText(m_font, "Press R to Restart\nPress ESC to Quit", 20);
+        instructionsText.setFillColor(sf::Color::White);
+        instructionsText.setPosition(sf::Vector2f(220, 240));
+        m_window.draw(instructionsText);
     }
 }
 
@@ -326,9 +331,9 @@ void Game::checkDeath() {
 }
 
 void Game::checkCollisions() {
-    // Check gate collisions - gates act as solid walls when closed
+    // Gate collision - gates act as solid walls when closed
     for (auto* gate : m_gates) {
-        if (gate->isOpen()) continue; // Gates don't block when open
+        if (gate->isOpen()) continue;
 
         sf::FloatRect gateRect = gate->getGateRect();
 
@@ -341,19 +346,29 @@ void Game::checkCollisions() {
             if (intersection) {
                 sf::FloatRect overlap = *intersection;
 
-                // Determine collision direction and push player out
+                // Push player out based on smallest overlap
                 if (overlap.size.x < overlap.size.y) {
-                    // Horizontal collision - push left or right
+                    // Horizontal collision
                     if (playerRect.position.x < gateRect.position.x) {
-                        // Player on left of gate
-                        // We need to access player position - this requires adding a method
-                        // For now, we'll just note collision happened
-                        // In a full implementation, Character would need setPosition()
+                        // Player on left - push left
+                        playerRect.position.x -= overlap.size.x;
+                    } else {
+                        // Player on right - push right
+                        playerRect.position.x += overlap.size.x;
                     }
                 } else {
-                    // Vertical collision - push up or down
-                    // Similar issue - needs Character::setPosition()
+                    // Vertical collision
+                    if (playerRect.position.y < gateRect.position.y) {
+                        // Player above - push up
+                        playerRect.position.y -= overlap.size.y;
+                    } else {
+                        // Player below - push down
+                        playerRect.position.y += overlap.size.y;
+                    }
                 }
+
+                // Update player position
+                player->setRect(playerRect);
             }
         }
     }
@@ -363,24 +378,26 @@ bool Game::checkWin() {
     bool hotAtFireDoor = false;
     bool coldAtWaterDoor = false;
 
+    // Check if both players are alive first
+    if (!m_hotPlayer || m_hotPlayer->isDead()) return false;
+    if (!m_coldPlayer || m_coldPlayer->isDead()) return false;
+
     for (auto* door : m_doors) {
         if (!door->isOpen()) continue;
 
         sf::FloatRect doorRect = door->getRect();
 
-        if (m_hotPlayer && !m_hotPlayer->isDead()) {
-            if (m_hotPlayer->getRect().findIntersection(doorRect)) {
-                if (dynamic_cast<FireDoor*>(door) != nullptr) {
-                    hotAtFireDoor = true;
-                }
+        // Check hot player at fire door
+        if (m_hotPlayer->getRect().findIntersection(doorRect)) {
+            if (dynamic_cast<FireDoor*>(door) != nullptr) {
+                hotAtFireDoor = true;
             }
         }
 
-        if (m_coldPlayer && !m_coldPlayer->isDead()) {
-            if (m_coldPlayer->getRect().findIntersection(doorRect)) {
-                if (dynamic_cast<WaterDoor*>(door) != nullptr) {
-                    coldAtWaterDoor = true;
-                }
+        // Check cold player at water door
+        if (m_coldPlayer->getRect().findIntersection(doorRect)) {
+            if (dynamic_cast<WaterDoor*>(door) != nullptr) {
+                coldAtWaterDoor = true;
             }
         }
     }
