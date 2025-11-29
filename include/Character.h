@@ -10,7 +10,7 @@ class Board;
 class Character {
 protected:
     sf::FloatRect m_rect;
-    std::optional<sf::Sprite> m_sprite;  // Changed to optional
+    std::optional<sf::Sprite> m_sprite;
     sf::Texture m_texture;
     bool m_isAlive;
     float m_yVelocity;
@@ -32,6 +32,10 @@ public:
     bool isDead() const;
     sf::FloatRect getRect() const;
     std::string getType() const;
+
+    // NEW: Add setPosition for gate collision
+    void setPosition(const sf::Vector2f& pos);
+    void setRect(const sf::FloatRect& rect);
 
     void setMovingRight(bool moving);
     void setMovingLeft(bool moving);

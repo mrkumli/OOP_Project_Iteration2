@@ -35,6 +35,8 @@ private:
 
     GameState m_gameState;
 
+    sf::Font m_font;  // For text rendering
+
 public:
     Game();
     ~Game();
