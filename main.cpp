@@ -29,8 +29,8 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font, int selectedOption) 
 
     // Menu options - Level 1-5 + Quit
     std::vector<std::string> options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Quit"};
-    float startY = 200;
-    float spacing = 50;
+    float startY = 200;    // Distance from top
+    float spacing = 50;    // Space between buttons
 
     for (size_t i = 0; i < options.size(); ++i) {
         sf::Text optionText(font, options[i], 28);
@@ -139,7 +139,9 @@ int main() {
                         game = nullptr;
 
                         // Game ended, exit program
-                        return 0;
+                        window.create(sf::VideoMode({640, 480}), "Hot and Cold");
+                        window.setFramerateLimit(60);
+                        menuState = MenuState::MainMenu;
                     }
                 }
             }

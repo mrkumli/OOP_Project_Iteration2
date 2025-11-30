@@ -19,8 +19,8 @@ void Doors::loadCommonImages() {
 
     m_backgroundSprite->setPosition(m_doorLocation);
     m_frameSprite->setPosition(sf::Vector2f(
-        m_doorLocation.x - CHUNK_SIZE/2,
-        m_doorLocation.y - 2 * CHUNK_SIZE/2
+        m_doorLocation.x - CHUNK_SIZE,
+        m_doorLocation.y - 2 * CHUNK_SIZE
     ));
 }
 

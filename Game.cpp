@@ -45,16 +45,25 @@ void Game::initializeLevel(int levelNumber) {
     m_players.push_back(m_coldPlayer);
 
     // Doors at the top - using row 3 (y = 48) for proper positioning
-    m_doors.push_back(new FireDoor(sf::Vector2f(32.0f, 32.0f)));    // Top left
-    m_doors.push_back(new WaterDoor(sf::Vector2f(560.0f, 32.0f)));  // Top right
+    // Doors at specific tile positions
+    m_doors.push_back(new FireDoor(sf::Vector2f(2.0f * 16, 2.0f * 16)));     // Row 2, Col 2
+    m_doors.push_back(new WaterDoor(sf::Vector2f(35.0f * 16, 2.0f * 16)));   // Row 2, Col 35
 
     // Gate with proper button placement
     // Left button, gate in middle, right button
-    std::vector<sf::Vector2f> gateButtons = {
-        sf::Vector2f(128.0f, 368.0f),   // Left button (before gate)
-        sf::Vector2f(272.0f, 368.0f)    // Right button (after gate)
+    // Left gate system
+    std::vector<sf::Vector2f> leftGateButtons = {
+        sf::Vector2f(6.0f * 16, 23.0f * 16),    // Button before gate
+        sf::Vector2f(14.0f * 16, 23.0f * 16)    // Button after gate
     };
-    m_gates.push_back(new Gates(sf::Vector2f(200.0f, 192.0f), gateButtons));
+    m_gates.push_back(new Gates(sf::Vector2f(10.0f * 16, 12.0f * 16), leftGateButtons));
+
+    // Right gate system
+    std::vector<sf::Vector2f> rightGateButtons = {
+        sf::Vector2f(25.0f * 16, 23.0f * 16),
+        sf::Vector2f(33.0f * 16, 23.0f * 16)
+    };
+    m_gates.push_back(new Gates(sf::Vector2f(29.0f * 16, 12.0f * 16), rightGateButtons));
 
     std::cout << "\n╔════════════════════════════════════════╗" << std::endl;
     std::cout << "║   HOT AND COLD - Level " << levelNumber << " Loaded      ║" << std::endl;
@@ -368,59 +377,41 @@ void Game::checkCollisions() {
 }
 
 bool Game::checkWin() {
+    static bool lastWinState = false;  // Track state changes
+
     bool hotAtFireDoor = false;
     bool coldAtWaterDoor = false;
 
-    if (!m_hotPlayer || m_hotPlayer->isDead()) {
-        std::cout << "[WIN CHECK] Hot player is dead or null" << std::endl;
-        return false;
-    }
-    if (!m_coldPlayer || m_coldPlayer->isDead()) {
-        std::cout << "[WIN CHECK] Cold player is dead or null" << std::endl;
-        return false;
-    }
-
-    std::cout << "[WIN CHECK] Both players alive, checking doors..." << std::endl;
+    if (!m_hotPlayer || m_hotPlayer->isDead()) return false;
+    if (!m_coldPlayer || m_coldPlayer->isDead()) return false;
 
     for (auto* door : m_doors) {
-        bool doorOpen = door->isOpen();
-        std::cout << "[WIN CHECK] Door open status: " << (doorOpen ? "OPEN" : "CLOSED") << std::endl;
-
-        if (!doorOpen) continue;
+        if (!door->isOpen()) continue;
 
         sf::FloatRect doorRect = door->getRect();
-        std::cout << "[WIN CHECK] Door rect: (" << doorRect.position.x << ", " << doorRect.position.y
-                  << ") size: (" << doorRect.size.x << ", " << doorRect.size.y << ")" << std::endl;
-
-        sf::FloatRect hotRect = m_hotPlayer->getRect();
-        sf::FloatRect coldRect = m_coldPlayer->getRect();
-
-        std::cout << "[WIN CHECK] Hot player rect: (" << hotRect.position.x << ", " << hotRect.position.y << ")" << std::endl;
-        std::cout << "[WIN CHECK] Cold player rect: (" << coldRect.position.x << ", " << coldRect.position.y << ")" << std::endl;
 
         if (m_hotPlayer->getRect().findIntersection(doorRect)) {
             if (dynamic_cast<FireDoor*>(door) != nullptr) {
                 hotAtFireDoor = true;
-                std::cout << "[WIN CHECK] ✓ Hot player AT FIRE DOOR!" << std::endl;
             }
         }
 
         if (m_coldPlayer->getRect().findIntersection(doorRect)) {
             if (dynamic_cast<WaterDoor*>(door) != nullptr) {
                 coldAtWaterDoor = true;
-                std::cout << "[WIN CHECK] ✓ Cold player AT WATER DOOR!" << std::endl;
             }
         }
     }
 
-    if (hotAtFireDoor && coldAtWaterDoor) {
-        std::cout << "[WIN CHECK] ★★★ WIN CONDITION MET! ★★★" << std::endl;
-        return true;
+    bool currentWinState = (hotAtFireDoor && coldAtWaterDoor);
+
+    // Only log when state changes
+    if (currentWinState && !lastWinState) {
+        std::cout << "[WIN] ★★★ WIN CONDITION MET! ★★★" << std::endl;
     }
 
-    std::cout << "[WIN CHECK] Not winning yet. Hot at door: " << hotAtFireDoor
-              << ", Cold at door: " << coldAtWaterDoor << std::endl;
-    return false;
+    lastWinState = currentWinState;
+    return currentWinState;
 }
 
 bool Game::shouldReturnToMenu() const {
