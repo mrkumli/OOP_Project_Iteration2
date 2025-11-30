@@ -34,15 +34,16 @@ void Doors::tryRaiseDoor() {
         }
         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
-    else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
-        m_doorLocation.y += DOOR_SPEED;
-        m_heightRaised -= DOOR_SPEED;
-        if (m_heightRaised <= 0.0f && m_isOpen) {
-            m_isOpen = false;
-            std::cout << "[DOOR] Door CLOSED" << std::endl;
-        }
-        if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
-    }
+    // FIXED: Don't auto-close doors - they stay open once opened for win condition
+    // else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
+    //     m_doorLocation.y += DOOR_SPEED;
+    //     m_heightRaised -= DOOR_SPEED;
+    //     if (m_heightRaised <= 0.0f && m_isOpen) {
+    //         m_isOpen = false;
+    //         std::cout << "[DOOR] Door CLOSED" << std::endl;
+    //     }
+    //     if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
+    // }
 }
 
 void Doors::draw(sf::RenderWindow& window) {
