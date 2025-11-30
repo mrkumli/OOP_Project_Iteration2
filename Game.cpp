@@ -53,8 +53,8 @@ void Game::initializeLevel(int levelNumber) {
     // Left button, gate in middle, right button
     // Left gate system
     std::vector<sf::Vector2f> leftGateButtons = {
-        sf::Vector2f(6.0f * 16, 23.0f * 16),    // Button before gate
-        sf::Vector2f(14.0f * 16, 23.0f * 16)    // Button after gate
+        sf::Vector2f(6.0f * 16, 17.0f * 16),    // Button before gate
+        sf::Vector2f(14.0f * 16, 17.0f * 16)    // Button after gate
     };
     m_gates.push_back(new Gates(sf::Vector2f(10.0f * 16, 12.0f * 16), leftGateButtons));
 
