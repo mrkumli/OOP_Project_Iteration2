@@ -56,14 +56,14 @@ void Game::initializeLevel(int levelNumber) {
         sf::Vector2f(6.0f * 16, 17.0f * 16),    // Button before gate
         sf::Vector2f(14.0f * 16, 17.0f * 16)    // Button after gate
     };
-    m_gates.push_back(new Gates(sf::Vector2f(10.0f * 16, 12.0f * 16), leftGateButtons));
+    m_gates.push_back(new Gates(sf::Vector2f(10.0f * 16, 15.0f * 16), leftGateButtons));
 
     // Right gate system
     std::vector<sf::Vector2f> rightGateButtons = {
-        sf::Vector2f(25.0f * 16, 23.0f * 16),
+        sf::Vector2f(25.0f * 16, 17.0f * 16),
         sf::Vector2f(33.0f * 16, 23.0f * 16)
     };
-    m_gates.push_back(new Gates(sf::Vector2f(29.0f * 16, 12.0f * 16), rightGateButtons));
+    m_gates.push_back(new Gates(sf::Vector2f(29.0f * 16, 15.0f * 16), rightGateButtons));
 
     std::cout << "\n╔════════════════════════════════════════╗" << std::endl;
     std::cout << "║   HOT AND COLD - Level " << levelNumber << " Loaded      ║" << std::endl;
