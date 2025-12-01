@@ -17,19 +17,19 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font, int selectedOption) 
     title.setFillColor(sf::Color::Yellow);
     title.setStyle(sf::Text::Bold);
     sf::FloatRect titleBounds = title.getLocalBounds();
-    title.setPosition(sf::Vector2f((640 - titleBounds.size.x) / 2, 80));
+    title.setPosition(sf::Vector2f((640 - titleBounds.size.x) / 2, 40));
     window.draw(title);
 
     // Subtitle
     sf::Text subtitle(font, "Select a Level", 24);
     subtitle.setFillColor(sf::Color(200, 200, 200));
     sf::FloatRect subtitleBounds = subtitle.getLocalBounds();
-    subtitle.setPosition(sf::Vector2f((640 - subtitleBounds.size.x) / 2, 150));
+    subtitle.setPosition(sf::Vector2f((640 - subtitleBounds.size.x) / 2, 120));
     window.draw(subtitle);
 
     // Menu options - Level 1-5 + Quit
     std::vector<std::string> options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Quit"};
-    float startY = 200;    // Distance from top
+    float startY = 150;    // Distance from top
     float spacing = 50;    // Space between buttons
 
     for (size_t i = 0; i < options.size(); ++i) {

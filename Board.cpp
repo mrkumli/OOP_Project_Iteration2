@@ -22,7 +22,7 @@ void Board::loadMap(const std::string& path) {
     std::string line;
 
     while (std::getline(file, line)) {
-        // Remove carriage returns (Windows CRLF fix)
+        // Remove carriage returns
         line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 
         if (line.empty()) continue;
@@ -42,7 +42,7 @@ void Board::loadMap(const std::string& path) {
         // Push the last cell
         row.push_back(cell);
 
-        // 🔧 Normalize row length to exactly 40 columns
+        // Normalize row length to exactly 40 columns
         if (row.size() < 40) {
             row.resize(40, "0");   // pad with empty tiles
         } else if (row.size() > 40) {

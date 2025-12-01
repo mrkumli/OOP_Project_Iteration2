@@ -69,18 +69,18 @@ void Game::initializeLevel(int levelNumber) {
     std::cout << "║   HOT AND COLD - Level " << levelNumber << " Loaded      ║" << std::endl;
     std::cout << "╚════════════════════════════════════════╝" << std::endl;
     std::cout << "\nOBJECTIVE:" << std::endl;
-    std::cout << "  • Hot (RED) must reach the FIRE DOOR (top-left)" << std::endl;
-    std::cout << "  • Cold (BLUE) must reach the WATER DOOR (top-right)" << std::endl;
-    std::cout << "  • BOTH players must reach their doors to WIN!" << std::endl;
+    std::cout << "  - Hot (RED) must reach the FIRE DOOR (top-left)" << std::endl;
+    std::cout << "  - Cold (BLUE) must reach the WATER DOOR (top-right)" << std::endl;
+    std::cout << "  - BOTH players must reach their doors to WIN!" << std::endl;
     std::cout << "\nCONTROLS:" << std::endl;
     std::cout << "  Hot Player:  ← → ↑ (Arrow Keys)" << std::endl;
     std::cout << "  Cold Player: A D W (WASD)" << std::endl;
     std::cout << "  ESC: Quit | R: Restart | M: Menu" << std::endl;
     std::cout << "\nMECHANICS:" << std::endl;
-    std::cout << "  • Hot dies in WATER (blue)" << std::endl;
-    std::cout << "  • Cold dies in LAVA (red/orange)" << std::endl;
-    std::cout << "  • Both die in GOO (green)" << std::endl;
-    std::cout << "  • Press PLATES to open GATES!" << std::endl;
+    std::cout << "  - Hot dies in WATER (blue)" << std::endl;
+    std::cout << "  - Cold dies in LAVA (red/orange)" << std::endl;
+    std::cout << "  - Both die in GOO (green)" << std::endl;
+    std::cout << "  - Press PLATES to open GATES!" << std::endl;
     std::cout << "\n════════════════════════════════════════\n" << std::endl;
 }
 
