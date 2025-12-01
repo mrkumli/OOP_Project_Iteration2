@@ -3,10 +3,7 @@
 
 Gates::Gates(const sf::Vector2f& gateLocation, const std::vector<sf::Vector2f>& plateLocations)
     : m_gateLocation(gateLocation),
-      m_plateLocations(plateLocations), // Note: Check header order.
-      // If header is: gateRect, plateRects, ..., gateTexture, ..., isPressed, isOpen, gateLocation, plateLocations.
-      // The warnings said m_plateLocations initialized after m_isPressed.
-      // If m_isPressed is declared BEFORE m_plateLocations in .h, it must be initialized BEFORE in .cpp
+      m_plateLocations(plateLocations),
       m_isPressed(false),
       m_isOpen(false)
 {
@@ -16,9 +13,6 @@ Gates::Gates(const sf::Vector2f& gateLocation, const std::vector<sf::Vector2f>& 
         m_gateLocation,
         sf::Vector2f(32.0f, 96.0f) // Hardcoded approximate size if texture fails
     );
-
-    // ... (rest of constructor logic) ...
-    // Since I don't have your texture size without loading, using safe defaults
 
     // RELOAD LOGIC TO BE SAFE:
     if (m_gateTexture.getSize().x > 0) {
@@ -81,9 +75,21 @@ void Gates::draw(sf::RenderWindow& window) {
     for (const auto& plateSprite : m_plateSprites) window.draw(plateSprite);
 }
 
-sf::FloatRect Gates::getGateRect() const { return m_gateRect; }
-const std::vector<sf::FloatRect>& Gates::getPlateRects() const { return m_plateRects; }
-bool Gates::isOpen() const { return m_isOpen; }
+//Gates Rectangle
+sf::FloatRect Gates::getGateRect() const {
+    return m_gateRect;
+}
+
+//Plates
+const std::vector<sf::FloatRect>& Gates::getPlateRects() const {
+    return m_plateRects;
+}
+
+bool Gates::isOpen() const {
+    return m_isOpen;
+}
+
+//Cllosion check for both
 bool Gates::checkCollision(const sf::FloatRect& rect1, const sf::FloatRect& rect2) const {
     return rect1.findIntersection(rect2).has_value();
 }
