@@ -20,11 +20,9 @@ void LevelSelect::loadImages() {
             std::cerr << "Warning: Failed to load level texture: " << path << std::endl;
         }
 
-        // Insert texture into the map first
+        // Inserting texture into the map first
         m_levelTextures[i] = texture;
 
-        // FIX: Use emplace/insert instead of operator[] because sf::Sprite
-        // has no default constructor in SFML 3.0.
         m_levelSprites.emplace(i, sf::Sprite(m_levelTextures[i]));
     }
 }
