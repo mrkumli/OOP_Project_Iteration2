@@ -1,19 +1,19 @@
-# HOT AND COLD - Co-op Puzzle Platformer
+HOT AND COLD - Co-op Puzzle Platformer
 
-## GAME INTRODUCTION
+ GAME INTRODUCTION
 
 Hot and Cold is a cooperative puzzle platformer game where two players must work together to reach their respective exit doors.
 You can control both characters simultaneously to navigate through hazardous levels filled with lava, water, and deadly goo.
 
-# The Twist:
+ The Twist:
 - Hot (Red Player) dies instantly in WATER but can safely walk through LAVA
 - Cold (Blue Player) dies instantly in LAVA but can safely walk through WATER
 - Both players die in GOO (green hazard)
 
-# Objective:
+ Objective:
 Guide both Hot and Cold to their respective colored doors at the top of each level. Both players must reach their doors to win!
 
-## Features:
+ Features:
 - 5 challenging levels with increasing difficulty
 - Pressure plate mechanics that open gates
 - Animated doors that open when players approach
@@ -22,7 +22,7 @@ Guide both Hot and Cold to their respective colored doors at the top of each lev
 
 ---
 
-## SYSTEM REQUIREMENTS
+ SYSTEM REQUIREMENTS
 
 - Windows 10/11 (64-bit)
 - SFML 3.0.2 libraries
@@ -31,7 +31,7 @@ Guide both Hot and Cold to their respective colored doors at the top of each lev
 
 ---
 
-## INSTALLATION & SETUP
+ INSTALLATION & SETUP
 
 1. Extract the Game Files
    - Unzip the entire project to a folder of your choice.
@@ -63,8 +63,8 @@ For "command not found" error, install MinGW-w64 and add it to your system PATH.
 
 <!_______________ COMPILING THE GAME _______________!>
 
-## FIRST WAY:
-** Using Make (Recommended) **
+ FIRST WAY:
+ Using Make (Recommended)
 
 1. Open Command Prompt in the project directory
 2. Run the following commands:
@@ -78,8 +78,8 @@ Run the game
     - make run
 
 
-## SECOND WAY:
-** Manual Compilation (Alternative) **
+ SECOND WAY:
+ Manual Compilation (Alternative)
 
 If Make is not available, compile manually:
 
@@ -94,7 +94,7 @@ g++ *.o -o game.exe -LC:/libraries/SFML-3.0.2/lib ^
 
 ---
 
-## RUNNING THE GAME
+ RUNNING THE GAME
 
 After successful compilation, run:
     - game.exe
@@ -103,24 +103,24 @@ Or simply double-click `game.exe` in File Explorer.
 
 ---
 
-## GAME CONTROLS
+ GAME CONTROLS
 
-** Hot Player ** (Red - Fire Character)
+ Hot Player  (Red - Fire Character)
 - Arrow Keys: Move Left/Right
 - Up Arrow: Jump
 
-** Cold Player ** (Blue - Water Character)
+ Cold Player  (Blue - Water Character)
 - A/D Keys: Move Left/Right
 - W Key: Jump
 
-** Universal Controls **
+ Universal Controls
 - ESC: Quit game
 - R: Restart level (when won/lost)
 - M: Return to main menu (when won/lost)
 
 ----------------------------------------
 
-## HOW TO PLAY
+ HOW TO PLAY
 
 1. Main Menu: Use UP/DOWN arrows to select a level, press ENTER to start
 2. Cooperative Gameplay: Control both characters simultaneously
@@ -140,7 +140,7 @@ Level Progression
 
 ---
 
-## PROJECT STRUCTURE
+PROJECT STRUCTURE
 
 ```
 HotAndCold/
@@ -170,10 +170,10 @@ HotAndCold/
 │   ├── gates_and_plates/ Mechanism graphics
 │   └── screens/          Menu graphics (irrelevant/just for reference)
 └── sfml-*.dll            SFML runtime libraries
-```
+
 ---
 
-## sTROUBLESHOOTING
+TROUBLESHOOTING
 
 Game Won't Start
 - Error: Missing DLL: Copy SFML DLLs to project folder
@@ -192,7 +192,7 @@ Gameplay Issues
 
 ---
 
-## TECHNICAL SPECIFICATIONS
+TECHNICAL SPECIFICATIONS
 
 - Engine: SFML 3.0.2 (Simple and Fast Multimedia Library)
 - Language: C++17
@@ -203,7 +203,7 @@ Gameplay Issues
 
 ---
 
-## CREDITS
+CREDITS
 
 Developers: Kumail Rizvi & Burair Hyder
 Framework: SFML
@@ -212,22 +212,24 @@ Year: Fall 2025
 
 ---
 
-## LICENSE
+LICENSE
 
 This game is created for educational purposes as part of an Object-Oriented Programming course project.
 
 ---
 
-## CONTACT & SUPPORT
+CONTACT & SUPPORT
 
 For bugs, questions, or feedback, please contact: sr10462@st.habib.edu.pk
 
 Enjoy the game and remember: teamwork makes the dream work! 🔥💧
 
-## Github Repo Link:
+
+Github Repo Link:
 '''
 https://github.com/mrkumli/OOP_Project_Iteration2
 '''
-Interim Demo Repo: '''
+Interim Demo Repo:
+'''
 https://github.com/mrkumli/SFML-OOP-Game-Project
 '''
