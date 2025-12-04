@@ -157,7 +157,7 @@ void Game::update() {
     if (checkWin()) {
         m_gameState = GameState::Won;
         std::cout << "\n╔════════════════════════════════════════╗" << std::endl;
-        std::cout << "║         ⭐ LEVEL COMPLETE! ⭐          ║" << std::endl;
+        std::cout << "║              LEVEL COMPLETE!           ║" << std::endl;
         std::cout << "╚════════════════════════════════════════╝" << std::endl;
         std::cout << "  Both players reached their doors!" << std::endl;
         std::cout << "  Press R to restart" << std::endl;
@@ -171,7 +171,7 @@ void Game::update() {
     if (hotDead && coldDead && m_gameState == GameState::Playing) {
         m_gameState = GameState::Lost;
         std::cout << "\n╔════════════════════════════════════════╗" << std::endl;
-        std::cout << "║           💀 GAME OVER 💀             ║" << std::endl;
+        std::cout << "║             GAME OVER                   ║" << std::endl;
         std::cout << "╚════════════════════════════════════════╝" << std::endl;
         std::cout << "  Both players died!" << std::endl;
         std::cout << "  Press R to try again" << std::endl;
@@ -330,10 +330,10 @@ void Game::checkDeath() {
         }
 
         if (!player->isDead()) {
-            for (const auto& goo : m_board->getGooPools()) {  // Use -> for pointer
+            for (const auto& goo : m_board->getGooPools()) {  // Use -> for pointer (for Burair)
                 if (playerRect.findIntersection(goo)) {
                     player->kill();
-                    std::cout << "💀 " << playerType << " died in GOO!" << std::endl;
+                    std::cout << "DEAD_EMOJI " << playerType << " died in GOO!" << std::endl;
                     break;
                 }
             }

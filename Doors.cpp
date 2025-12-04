@@ -34,7 +34,7 @@ void Doors::tryRaiseDoor() {
         }
         if (m_doorSprite) m_doorSprite->setPosition(m_doorLocation);
     }
-    // FIXED: Don't auto-close doors - they stay open once opened for win condition
+    // FIXED Issue (Kumail's): Don't auto-close doors - they stay open once opened for win condition
     // else if (!m_playerAtDoor && m_heightRaised > 0.0f) {
     //     m_doorLocation.y += DOOR_SPEED;
     //     m_heightRaised -= DOOR_SPEED;
